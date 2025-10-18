@@ -1,0 +1,356 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: transparent;
+  color: #e0e0e0;
+  overflow: hidden;
+  -webkit-app-region: no-drag;
+}
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Window controls */
+.window-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 1000;
+  -webkit-app-region: no-drag;
+}
+
+.control-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn.close:hover {
+  background: rgba(220, 38, 38, 0.8);
+}
+
+/* Title bar - draggable */
+.title-bar {
+  padding: 20px 30px;
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-app-region: drag;
+  cursor: move;
+}
+
+.title-bar h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #60a5fa;
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+}
+
+/* Panels container */
+.panels-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Panel base styles */
+.panel {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: border-color 0.3s;
+}
+
+.panel:hover {
+  border-color: rgba(96, 165, 250, 0.6);
+}
+
+/* Panel layouts */
+.panel-large {
+  grid-row: 1 / 4;
+  grid-column: 1;
+}
+
+.panel-3d {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.panel-data {
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.panel-track {
+  grid-row: 3;
+  grid-column: 2;
+}
+
+/* Panel header */
+.panel-header {
+  padding: 15px 20px;
+  background: rgba(30, 41, 59, 0.8);
+  border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  -webkit-app-region: no-drag;
+}
+
+.panel-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #60a5fa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Resize handle */
+.resize-handle {
+  width: 20px;
+  height: 20px;
+  background: rgba(96, 165, 250, 0.3);
+  border-radius: 4px;
+  cursor: nwse-resize;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resize-handle::after {
+  content: "⋮⋮";
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  transform: rotate(-45deg);
+}
+
+.resize-handle:hover {
+  background: rgba(96, 165, 250, 0.5);
+}
+
+/* Panel content */
+.panel-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+.panel-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.3);
+  border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 165, 250, 0.5);
+}
+
+/* LLM Output List */
+.output-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.output-list li {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid #60a5fa;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.output-list li:hover {
+  background: rgba(30, 41, 59, 0.8);
+  transform: translateX(4px);
+}
+
+.output-list .bullet {
+  color: #60a5fa;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.output-list .text {
+  color: #e0e0e0;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* 3D Canvas placeholder */
+.canvas-3d {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none; /* Hidden until Three.js is implemented */
+}
+
+.canvas-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 2px dashed rgba(96, 165, 250, 0.3);
+}
+
+.canvas-placeholder p:first-child {
+  font-size: 64px;
+  margin-bottom: 10px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.placeholder-text {
+  font-size: 18px;
+  color: #60a5fa;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.placeholder-hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+/* Data grid */
+.data-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 6px;
+  border-left: 3px solid #60a5fa;
+}
+
+.data-label {
+  font-size: 14px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.data-value {
+  font-size: 16px;
+  color: #e0e0e0;
+  font-weight: 600;
+  font-family: "Courier New", monospace;
+}
+
+.data-value .temp {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* Track data section */
+.track-data {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.track-data h3 {
+  font-size: 14px;
+  color: #60a5fa;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Panel 4 specific layout */
+.panel-track .panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+}
+
+.panel-track .canvas-placeholder {
+  height: 150px;
+  flex-shrink: 0;
+}
+
+/* Resizing state */
+.panel.resizing {
+  border-color: #60a5fa;
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+}
+
+/* Dragging state */
+.panel.dragging {
+  opacity: 0.8;
+  cursor: move;
+}
