@@ -309,7 +309,7 @@ class MainOrchestrator:
             
             # Initialize Telemetry Ingestor
             self.logger.info("Initializing Telemetry Ingestor...")
-            self.telemetry_ingestor = TelemetryIngestor()
+            self.telemetry_ingestor = TelemetryIngestor(state_handler=self.state_handler)
             self.component_manager.register_component("telemetry_ingestor", self.telemetry_ingestor, requires_thread=True)
             
             # Initialize Car Twin

@@ -149,10 +149,10 @@ Current Race Context:
 - Session: {race_context.get('session_type', 'Unknown')}
 
 Car State:
-- Position: {car_twin.current_state.position if car_twin else 'Unknown'}
-- Tire: {car_twin.current_state.tire.compound if car_twin else 'Unknown'} (wear: {car_twin.current_state.tire.wear_level if car_twin else 'Unknown'})
-- Fuel: {car_twin.current_state.fuel_level if car_twin else 'Unknown'}
-- Lap Time: {car_twin.current_state.lap_time if car_twin else 'Unknown'}s
+- Position: {car_twin.get('current_state', {}).get('position', 'Unknown') if car_twin else 'Unknown'}
+- Tire: {car_twin.get('current_state', {}).get('tire', {}).get('compound', 'Unknown') if car_twin else 'Unknown'} (wear: {car_twin.get('current_state', {}).get('tire', {}).get('wear_level', 'Unknown') if car_twin else 'Unknown'})
+- Fuel: {car_twin.get('current_state', {}).get('fuel_level', 'Unknown') if car_twin else 'Unknown'}
+- Lap Time: {car_twin.get('current_state', {}).get('lap_time', 'Unknown') if car_twin else 'Unknown'}s
 
 Simulation Results:
 """
@@ -275,7 +275,7 @@ Focus on immediate tactical decisions that the race engineer can communicate to 
             return recommendations
         
         # Analyze tire wear
-        tire_wear = car_twin.current_state.tire.wear_level
+        tire_wear = car_twin.get('current_state', {}).get('tire', {}).get('wear_level', 0.5)
         if tire_wear > 0.8:
             recommendations.append({
                 "priority": "urgent",
@@ -304,7 +304,7 @@ Focus on immediate tactical decisions that the race engineer can communicate to 
             })
         
         # Analyze fuel level
-        fuel_level = car_twin.current_state.fuel_level
+        fuel_level = car_twin.get('current_state', {}).get('fuel_level', 0.5)
         if fuel_level < 0.15:
             recommendations.append({
                 "priority": "urgent",

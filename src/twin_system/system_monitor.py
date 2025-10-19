@@ -34,6 +34,7 @@ class HealthStatus(Enum):
     WARNING = "warning"
     DEGRADED = "degraded"
     CRITICAL = "critical"
+    ERROR = "error"
     OFFLINE = "offline"
 
 
@@ -593,7 +594,7 @@ class SystemMonitor:
             "performance_metrics": performance_summary,
             "threshold_violations": self._get_threshold_violations(),
             "optimization_actions": optimization_actions,
-            "optimization_history": self.performance_optimizer.optimization_history[-10:],  # Last 10
+            "optimization_history": list(self.performance_optimizer.optimization_history)[-10:],  # Last 10
             "trends": self._calculate_performance_trends(),
             "bottlenecks": self._identify_performance_bottlenecks()
         }
@@ -750,8 +751,9 @@ class SystemMonitor:
             return "stable"
         
         # Simple trend calculation
-        first_half = sum(values[:len(values)//2]) / (len(values)//2)
-        second_half = sum(values[len(values)//2:]) / (len(values) - len(values)//2)
+        mid_point = len(values) // 2
+        first_half = sum(values[:mid_point]) / mid_point if mid_point > 0 else 0
+        second_half = sum(values[mid_point:]) / (len(values) - mid_point) if (len(values) - mid_point) > 0 else 0
         
         change_percent = ((second_half - first_half) / first_half) * 100 if first_half > 0 else 0
         
@@ -871,7 +873,8 @@ class SystemMonitor:
         
         for metric_name, measurements in self.performance_metrics.items():
             if len(measurements) >= 10:
-                values = [m["value"] for m in measurements[-20:]]  # Last 20 measurements
+                measurements_list = list(measurements)
+                values = [m["value"] for m in measurements_list[-20:]]  # Last 20 measurements
                 trends[metric_name] = self._calculate_trend(values)
         
         return trends
@@ -888,7 +891,8 @@ class SystemMonitor:
             if not threshold:
                 continue
             
-            recent_values = [m["value"] for m in measurements[-10:]]
+            measurements_list = list(measurements)
+            recent_values = [m["value"] for m in measurements_list[-10:]]
             avg_recent = sum(recent_values) / len(recent_values)
             
             if avg_recent > threshold:

@@ -630,7 +630,7 @@ class TelemetryIngestor:
     with seamless switching via configuration.
     """
     
-    def __init__(self, config_path: str = "config/system_config.json"):
+    def __init__(self, config_path: str = "config/system_config.json", state_handler=None):
         self.config = load_config(config_path)
         self.telemetry_config = self.config.get("telemetry", {})
         
@@ -654,6 +654,7 @@ class TelemetryIngestor:
             self._initialize_live_client()
         
         # State management
+        self.state_handler = state_handler
         self.last_valid_data = None
         self.running = False
         self.ingestion_thread = None
@@ -760,6 +761,14 @@ class TelemetryIngestor:
                     if processed_data:
                         # Output to shared storage
                         self._output_telemetry_state(processed_data)
+                        
+                        # Update state handler if available
+                        if self.state_handler:
+                            try:
+                                self.state_handler.update_telemetry_state(processed_data)
+                            except Exception as e:
+                                self.logger.error(f"Failed to update state handler: {e}")
+                        
                         # Reset failure counter on successful processing
                         self.data_source_failures = 0
                     else:
