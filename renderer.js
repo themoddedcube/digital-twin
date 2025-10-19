@@ -95,25 +95,32 @@ class PanelResizer {
 // Initialize panel resizer
 const resizer = new PanelResizer()
 
+
 // ============================================
 // 3D VISUALIZATION INTEGRATION POINTS
 // ============================================
 
 // Panel 2: F1 Car 3D Model
-// Uncomment and implement when adding Three.js
-/*
+// Import Three.js library
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+console.log('Three.js loaded:', THREE);
+console.log('GLTFLoader loaded:', GLTFLoader);
+
+
 
 function initCar3D() {
+  
   const canvas = document.getElementById('car-3d-canvas');
+  
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   
   renderer.setSize(canvas.clientWidth, canvas.clientHeight);
   renderer.setClearColor(0x000000, 0); // Transparent background
+  
   
   // Lighting
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -122,31 +129,38 @@ function initCar3D() {
   directionalLight.position.set(5, 5, 5);
   scene.add(directionalLight);
   
+  
   // Load F1 car model
   const loader = new GLTFLoader();
-  loader.load('assets/models/f1-car.glb', (gltf) => {
-    const car = gltf.scene;
-    scene.add(car);
-    
-    // Auto-rotate animation
-    function animate() {
-      requestAnimationFrame(animate);
-      car.rotation.y += 0.01;
-      renderer.render(scene, camera);
-    }
-    animate();
-  });
+
+  loader.load('./assets/models/f1-car.gltf', 
+    (gltf) => {
+      const car = gltf.scene;
+      
+      // Scale and position the car
+      car.scale.set(0.1, 0.1, 0.1); // Scale down if too big
+      car.position.set(0, 0, 0);
+      
+      scene.add(car);
+      
+      // Auto-rotate animation
+      function animate() {
+        requestAnimationFrame(animate);
+        car.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    });
   
   camera.position.z = 5;
   
   // Optional: Add OrbitControls for manual rotation
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
+  // const controls = new OrbitControls(camera, renderer.domElement);
+  // controls.enableDamping = true;
 }
 
 // Call when ready
-// initCar3D();
-*/
+initCar3D();
 
 // Panel 4: Track Digital Twin with Animated Cars
 // Uncomment and implement when adding track visualization
@@ -262,6 +276,6 @@ window.addEventListener("resize", () => {
   // camera.updateProjectionMatrix();
 })
 
-console.log("[v0] F1 Dashboard initialized")
-console.log("[v0] Panel resizing enabled - drag resize handles to adjust panel sizes")
-console.log("[v0] 3D integration points ready - see comments in renderer.js for Three.js implementation")
+// console.log("[v0] F1 Dashboard initialized")
+// console.log("[v0] Panel resizing enabled - drag resize handles to adjust panel sizes")
+// console.log("[v0] 3D integration points ready - see comments in renderer.js for Three.js implementation")

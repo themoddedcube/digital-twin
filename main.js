@@ -15,6 +15,8 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       backgroundThrottling: false, // Keep animations running
+      enableRemoteModule: true,
+      webSecurity: false, // Allow loading modules from node_modules
     },
   })
 

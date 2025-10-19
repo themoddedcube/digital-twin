@@ -1,0 +1,11 @@
+/node_modules
+/digital-twin/node_modules
+/digital-twin/dist
+/digital-twin/dist-ssr
+/digital-twin/*.local
+/digital-twin/*.log
+/digital-twin/npm-debug.log*
+/digital-twin/yarn-debug.log*
+/digital-twin/yarn-error.log*
+/digital-twin/pnpm-debug.log*
+/digital-twin/lerna-debug.log*
