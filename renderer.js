@@ -353,6 +353,8 @@ class Car3DVisualization {
     );
   }
 
+  
+
   showFallbackVisualization() {
     // Create a simple car representation if model fails to load
     const geometry = new THREE.BoxGeometry(2, 0.5, 4);
@@ -391,12 +393,151 @@ class Car3DVisualization {
   }
 }
 
+//3d track
+// import * as THREE from "three";
+// import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+// import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+class Track3DVisualization {
+  constructor() {
+    this.canvas = document.querySelector('.track-visualization');
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.track = null;
+    this.init();
+  }
+
+  init() {
+    this.setupScene();
+    this.loadTrackModel();
+    this.startAnimation();
+    this.setupResizeHandler();
+  }
+
+  setupScene() {
+    // Create placeholder canvas
+    const canvas = document.createElement('canvas');
+    canvas.className = 'track-3d-canvas';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.borderRadius = '12px';
+
+    // Replace placeholder with canvas
+    const placeholder = this.canvas.querySelector('.track-placeholder');
+    this.canvas.replaceChild(canvas, placeholder);
+
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+
+    this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    this.renderer.setClearColor(0x000000, 0);
+
+    // Enhanced lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    this.scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 5, 5);
+    this.scene.add(directionalLight);
+
+    const pointLight = new THREE.PointLight(0x3b82f6, 0.5, 100);
+    pointLight.position.set(-5, 5, 5);
+    this.scene.add(pointLight);
+
+    this.camera.position.set(-1, 1, 6);
+
+    // Orbit Controls
+    const controls = new OrbitControls(this.camera, this.renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = true;
+    controls.enablePan = false;
+    controls.maxPolarAngle = Math.PI / 2;
+    controls.minPolarAngle = Math.PI / 4;
+  }
+
+  loadTrackModel() {
+    const loader = new GLTFLoader();
+    loader.load(
+      "./assets/models/f1-track.gltf",
+      (gltf) => {
+        this.track = gltf.scene;
+
+        // Scale & center track
+        this.track.scale.set(1.5, 1.5, 1.5);
+        const box = new THREE.Box3().setFromObject(this.track);
+        const center = box.getCenter(new THREE.Vector3());
+        this.track.position.sub(center);
+
+        // Add subtle glow effect
+        this.track.traverse((child) => {
+          if (child.isMesh) {
+            child.material.emissive = new THREE.Color(0x1e40af);
+            child.material.emissiveIntensity = 0.1;
+          }
+        });
+
+        this.scene.add(this.track);
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading 3D model:", error);
+        this.showFallbackVisualization();
+      }
+    );
+  }
+
+  
+
+  showFallbackVisualization() {
+    // Create a simple track representation if model fails to load
+    const geometry = new THREE.BoxGeometry(2, 0.5, 4);
+    const material = new THREE.MeshPhongMaterial({
+      color: 0x1e40af,
+      transparent: true,
+      opacity: 0.8
+    });
+    this.track = new THREE.Mesh(geometry, material);
+    this.scene.add(this.track);
+  }
+
+  startAnimation() {
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      if (this.track) {
+        this.track.rotation.y += 0.005;
+      }
+
+      this.renderer.render(this.scene, this.camera);
+    };
+    animate();
+  }
+
+  setupResizeHandler() {
+    window.addEventListener("resize", () => {
+      const canvas = this.renderer.domElement;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      this.renderer.setSize(width, height);
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+    });
+  }
+}
+
+
+
+
 // ============================================
 // REAL-TIME DATA SIMULATION
 // ============================================
 class DataSimulator {
   constructor() {
-    this.carData = {
+    this.trackData = {
       speed: 325,
       rpm: 18000,
       fuel: 80,
@@ -406,19 +547,19 @@ class DataSimulator {
   }
 
   init() {
-    this.startCarDataUpdates();
+    this.startTrackDataUpdates();
     this.startFieldDataUpdates();
   }
 
-  startCarDataUpdates() {
+  startTrackDataUpdates() {
     setInterval(() => {
       // Simulate realistic F1 data variations
-      this.carData.speed = 300 + Math.floor(Math.random() * 50);
-      this.carData.rpm = 17000 + Math.floor(Math.random() * 2000);
-      this.carData.temperature = 90 + Math.floor(Math.random() * 10);
-      this.carData.fuel = Math.max(60, this.carData.fuel - Math.random() * 0.5);
+      this.trackData.speed = 300 + Math.floor(Math.random() * 50);
+      this.trackData.rpm = 17000 + Math.floor(Math.random() * 2000);
+      this.trackData.temperature = 90 + Math.floor(Math.random() * 10);
+      this.trackData.fuel = Math.max(60, this.carData.fuel - Math.random() * 0.5);
 
-      this.updateCarDisplay();
+      this.updateTrackDisplay();
     }, 2000);
   }
 
@@ -429,8 +570,8 @@ class DataSimulator {
     }, 5000);
   }
 
-  updateCarDisplay() {
-    // Update car data elements
+  updateTrackDisplay() {
+    // Update track data elements
     const speedElement = document.getElementById('speed');
     const rpmElement = document.getElementById('rpm');
     const fuelElement = document.getElementById('fuel');
@@ -440,10 +581,10 @@ class DataSimulator {
     const brakeElement = document.getElementById('brake');
     const drsElement = document.getElementById('drs');
 
-    if (speedElement) speedElement.textContent = `${this.carData.speed} km/h`;
-    if (rpmElement) rpmElement.textContent = this.carData.rpm.toLocaleString();
-    if (fuelElement) fuelElement.textContent = `${Math.round(this.carData.fuel)}%`;
-    if (temperatureElement) temperatureElement.textContent = `${this.carData.temperature}°C`;
+    if (speedElement) speedElement.textContent = `${this.trackData.speed} km/h`;
+    if (rpmElement) rpmElement.textContent = this.trackData.rpm.toLocaleString();
+    if (fuelElement) fuelElement.textContent = `${Math.round(this.trackData.fuel)}%`;
+    if (temperatureElement) temperatureElement.textContent = `${this.trackData.temperature}°C`;
     if (gearElement) gearElement.textContent = `${Math.floor(Math.random() * 8) + 1}th`;
     if (throttleElement) throttleElement.textContent = `${Math.floor(Math.random() * 30) + 70}%`;
     if (brakeElement) brakeElement.textContent = `${Math.floor(Math.random() * 20)}%`;
@@ -475,7 +616,7 @@ class DataSimulator {
 // ============================================
 // INITIALIZATION
 // ============================================
-let modalManager, driverManager, aiSystem, car3D, dataSimulator;
+let modalManager, driverManager, aiSystem, car3D, track3D, dataSimulator;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize all systems
@@ -483,6 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
   driverManager = new DriverParameterManager();
   aiSystem = new AIRecommendationSystem();
   car3D = new Car3DVisualization();
+  track3D = new Track3DVisualization();
   dataSimulator = new DataSimulator();
 
   // Add loading animation
