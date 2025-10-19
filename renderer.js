@@ -255,6 +255,12 @@ class AIRecommendationSystem {
   }
 }
 
+// renderer.js
+// renderer.js
+
+
+
+
 // ============================================
 // 3D VISUALIZATION (CAR TWIN MODEL)
 // ============================================
@@ -535,90 +541,49 @@ class Track3DVisualization {
 // ============================================
 // REAL-TIME DATA SIMULATION
 // ============================================
-class DataSimulator {
-  constructor() {
-    this.trackData = {
-      speed: 325,
-      rpm: 18000,
-      fuel: 80,
-      temperature: 95
-    };
-    this.init();
-  }
+async function updateCarData() {
+  try {
+    // First API
+    let response = await fetch("https://8000-fcdhxcev1.brevlab.com/api/v1/car-twin");
+    let data = await response.json();
+    let strategy = data.car_twin.strategy_metrics;
 
-  init() {
-    this.startTrackDataUpdates();
-    this.startFieldDataUpdates();
-  }
+    document.getElementById("performanceDelta").textContent = `${strategy.performance_delta.toFixed(2)}%`;
+    document.getElementById("tireRate").textContent = strategy.tire_degradation_rate.toFixed(4);
+    document.getElementById("pitWindow").textContent = `${strategy.optimal_pit_window[0]} - ${strategy.optimal_pit_window[1]}`;
+    document.getElementById("pitLap").textContent = strategy.predicted_pit_lap;
 
-  startTrackDataUpdates() {
-    setInterval(() => {
-      // Simulate realistic F1 data variations
-      this.trackData.speed = 300 + Math.floor(Math.random() * 50);
-      this.trackData.rpm = 17000 + Math.floor(Math.random() * 2000);
-      this.trackData.temperature = 90 + Math.floor(Math.random() * 10);
-      this.trackData.fuel = Math.max(60, this.carData.fuel - Math.random() * 0.5);
+    // Second API
+    let response1 = await fetch("https://8000-fcdhxcev1.brevlab.com/api/v1/environment");
+    let data1 = await response1.json();
+    let weather = data1.environment.weather.condition;
+    document.getElementById("weather").textContent = weather;
 
-      this.updateTrackDisplay();
-    }, 2000);
-  }
+    // Third API
+    let response2 = await fetch("https://8000-fcdhxcev1.brevlab.com/api/v1/field-twin");
+    let data2 = await response2.json();
+    let first = data2.field_twin.competitors[0];
 
-  startFieldDataUpdates() {
-    setInterval(() => {
-      // Simulate field data updates
-      this.updateFieldDisplay();
-    }, 5000);
-  }
+    document.getElementById("gap-leader").textContent = first.gap_to_leader;
+    document.getElementById("strategy").textContent = first.predicted_strategy;
+    document.getElementById("pitProbability").textContent = first.pit_probability.toFixed(3);
 
-  updateTrackDisplay() {
-    // Update track data elements
-    const speedElement = document.getElementById('speed');
-    const rpmElement = document.getElementById('rpm');
-    const fuelElement = document.getElementById('fuel');
-    const temperatureElement = document.getElementById('temperature');
-    const gearElement = document.getElementById('gear');
-    const throttleElement = document.getElementById('throttle');
-    const brakeElement = document.getElementById('brake');
-    const drsElement = document.getElementById('drs');
-
-    if (speedElement) speedElement.textContent = `${this.trackData.speed} km/h`;
-    if (rpmElement) rpmElement.textContent = this.trackData.rpm.toLocaleString();
-    if (fuelElement) fuelElement.textContent = `${Math.round(this.trackData.fuel)}%`;
-    if (temperatureElement) temperatureElement.textContent = `${this.trackData.temperature}°C`;
-    if (gearElement) gearElement.textContent = `${Math.floor(Math.random() * 8) + 1}th`;
-    if (throttleElement) throttleElement.textContent = `${Math.floor(Math.random() * 30) + 70}%`;
-    if (brakeElement) brakeElement.textContent = `${Math.floor(Math.random() * 20)}%`;
-    if (drsElement) drsElement.textContent = Math.random() > 0.5 ? 'Available' : 'Not Available';
-  }
-
-  updateFieldDisplay() {
-    // Update field data elements
-    const trackTempElement = document.getElementById('track-temp');
-    const gapLeaderElement = document.getElementById('gap-leader');
-    const positionElement = document.getElementById('position');
-    const flagsElement = document.getElementById('flags');
-    const lapTimeElement = document.getElementById('lap-time');
-    const sector1Element = document.getElementById('sector1');
-    const sector2Element = document.getElementById('sector2');
-    const sector3Element = document.getElementById('sector3');
-
-    if (trackTempElement) trackTempElement.textContent = `${42 + Math.floor(Math.random() * 5)}°C`;
-    if (gapLeaderElement) gapLeaderElement.textContent = `+${(Math.random() * 2).toFixed(2)}s`;
-    if (positionElement) positionElement.textContent = `P${3 + Math.floor(Math.random() * 5)}`;
-    if (flagsElement) flagsElement.textContent = Math.random() > 0.8 ? 'Yellow' : 'Green';
-    if (lapTimeElement) lapTimeElement.textContent = `1:${23 + Math.floor(Math.random() * 5)}.${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-    if (sector1Element) sector1Element.textContent = `${28 + Math.random() * 2}`.substring(0, 6);
-    if (sector2Element) sector2Element.textContent = `${32 + Math.random() * 2}`.substring(0, 6);
-    if (sector3Element) sector3Element.textContent = `${22 + Math.random() * 2}`.substring(0, 6);
+  } catch (error) {
+    console.error("Failed to fetch car data:", error);
   }
 }
+
+updateCarData();
+setInterval(updateCarData, 500);
+
+
 
 
 
 // ============================================
 // INITIALIZATION
 // ============================================
-let modalManager, driverManager, aiSystem, car3D, track3D, dataSimulator;
+let modalManager, driverManager, aiSystem, car3D, track3D;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize all systems
@@ -627,12 +592,11 @@ document.addEventListener('DOMContentLoaded', () => {
   aiSystem = new AIRecommendationSystem();
   car3D = new Car3DVisualization();
   track3D = new Track3DVisualization();
-  dataSimulator = new DataSimulator();
 
   // Add loading animation
   document.body.classList.add('loaded');
 
-  console.log('F1 Race Engineer Dashboard initialized successfully');
+  // console.log('F1 Race Engineer Dashboard initialized successfully');
 });
 
 // ============================================
@@ -660,6 +624,5 @@ window.F1Dashboard = {
   driverManager,
   aiSystem,
   car3D,
-  track3D,
-  dataSimulator
+  track3D
 };
