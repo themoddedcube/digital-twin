@@ -613,6 +613,8 @@ class DataSimulator {
   }
 }
 
+
+
 // ============================================
 // INITIALIZATION
 // ============================================
@@ -658,5 +660,6 @@ window.F1Dashboard = {
   driverManager,
   aiSystem,
   car3D,
+  track3D,
   dataSimulator
 };

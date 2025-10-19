@@ -104,110 +104,118 @@
         </div>
       </section>
 
-      <!-- Right Top: Car Digital Twin -->
-      <section class="panel panel-car" id="panel-car">
-        <header class="panel-header">
-          <div class="panel-title">
-            <div class="panel-icon"></div>
-            <div>
-              <h2>Car Digital Twin</h2>
-              <p>Live telemetry data</p>
+      <!-- Right Panel: Scrollable Digital Twins -->
+      <section class="panel panel-right" id="panel-right">
+        <!-- Car Digital Twin Section -->
+        <div class="car-section">
+          <header class="section-header">
+            <div class="panel-title">
+              <div class="panel-icon car-icon-header"></div>
+              <div>
+                <h2>Car Digital Twin</h2>
+                <p>Live telemetry data</p>
+              </div>
             </div>
-          </div>
-        </header>
-        <div class="panel-content">
-          <div class="car-visualization">
-            <div class="car-placeholder">
-              <div class="car-icon"></div>
-              <p>3D Model Visualization</p>
+          </header>
+          <div class="section-content">
+            <div class="car-visualization">
+              <div class="car-placeholder">
+                <div class="car-icon"></div>
+                <p>3D Model Visualization</p>
+              </div>
             </div>
-          </div>
-          <div class="twin-data">
-            <div class="data-grid">
-              <div class="data-item">
-                <span class="data-label">Speed</span>
-                <span class="data-value" id="speed">325 km/h</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">RPM</span>
-                <span class="data-value" id="rpm">18,000</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Fuel</span>
-                <span class="data-value" id="fuel">80%</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Temperature</span>
-                <span class="data-value" id="temperature">95°C</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Gear</span>
-                <span class="data-value" id="gear">8th</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Throttle</span>
-                <span class="data-value" id="throttle">87%</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Brake</span>
-                <span class="data-value" id="brake">12%</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">DRS</span>
-                <span class="data-value" id="drs">Available</span>
+            <div class="twin-data">
+              <div class="data-grid">
+                <div class="data-item">
+                  <span class="data-label">Speed</span>
+                  <span class="data-value" id="speed">325 km/h</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">RPM</span>
+                  <span class="data-value" id="rpm">18,000</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Fuel</span>
+                  <span class="data-value" id="fuel">80%</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Temperature</span>
+                  <span class="data-value" id="temperature">95°C</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Gear</span>
+                  <span class="data-value" id="gear">8th</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Throttle</span>
+                  <span class="data-value" id="throttle">87%</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Brake</span>
+                  <span class="data-value" id="brake">12%</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">DRS</span>
+                  <span class="data-value" id="drs">Available</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
 
-      <!-- Right Bottom: Field Digital Twin -->
-      <section class="panel panel-field" id="panel-field">
-        <div class="panel-content">
-          <div class="track-visualization">
-            <div class="track-placeholder">
-              <div class="track-icon"></div>
-              <p>3D Model Visualization</p>
+        <!-- Field Digital Twin Section -->
+        <div class="field-section">
+          <header class="section-header">
+            <div class="panel-title">
+              <div class="panel-icon field-icon-header"></div>
+              <div>
+                <h2>Field Digital Twin</h2>
+                <p>Track overview & race data</p>
+              </div>
             </div>
-          </div>
-        <div class="panel-content">
-            <div id = "track-3d-canvas" class="field-placeholder">
-              <!-- <div class="field-icon"></div>
-              <p>Track Overview</p> -->
+          </header>
+          <div class="section-content">
+            <div class="track-visualization">
+              <div class="track-placeholder">
+                <div class="track-icon"></div>
+                <p>3D Track Visualization</p>
+              </div>
             </div>
-          <div class="twin-data">
-            <div class="data-grid">
-              <div class="data-item">
-                <span class="data-label">Track Temp</span>
-                <span class="data-value" id="track-temp">42°C</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Gap to Leader</span>
-                <span class="data-value" id="gap-leader">+1.2s</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Position</span>
-                <span class="data-value" id="position">P3</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Flags</span>
-                <span class="data-value" id="flags">Green</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Lap Time</span>
-                <span class="data-value" id="lap-time">1:23.456</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Sector 1</span>
-                <span class="data-value" id="sector1">28.123</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Sector 2</span>
-                <span class="data-value" id="sector2">32.456</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Sector 3</span>
-                <span class="data-value" id="sector3">22.877</span>
+            <div id="track-3d-canvas" class="field-placeholder"></div>
+            <div class="twin-data">
+              <div class="data-grid">
+                <div class="data-item">
+                  <span class="data-label">Track Temp</span>
+                  <span class="data-value" id="track-temp">42°C</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Gap to Leader</span>
+                  <span class="data-value" id="gap-leader">+1.2s</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Position</span>
+                  <span class="data-value" id="position">P3</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Flags</span>
+                  <span class="data-value" id="flags">Green</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Lap Time</span>
+                  <span class="data-value" id="lap-time">1:23.456</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Sector 1</span>
+                  <span class="data-value" id="sector1">28.123</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Sector 2</span>
+                  <span class="data-value" id="sector2">32.456</span>
+                </div>
+                <div class="data-item">
+                  <span class="data-label">Sector 3</span>
+                  <span class="data-value" id="sector3">22.877</span>
+                </div>
               </div>
             </div>
           </div>

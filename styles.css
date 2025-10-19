@@ -58,6 +58,7 @@ body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 /* ===== App Container ===== */
@@ -211,9 +212,9 @@ body {
   flex: 1;
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  grid-template-rows: 1fr 1fr;
   gap: 20px;
   padding: 20px 32px 32px;
+  height: calc(100vh - 100px);
 }
 
 /* ===== Panels ===== */
@@ -309,25 +310,24 @@ body {
 .panel-content {
   flex: 1;
   padding: 16px;
-  overflow: auto;
+  overflow: visible;
+}
+
+.panel-right .panel-content {
+  padding: 0;
 }
 
 /* ===== Panel Layout ===== */
 .panel-ai {
   grid-column: 1/2;
-  grid-row: 1/3;
 }
 
-.panel-car {
+.panel-right {
   grid-column: 2/3;
-  grid-row: 1/2;
-  height: 50vh;
-}
-
-.panel-field {
-  grid-column: 2/3;
-  grid-row: 2/3;
-  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
 }
 
 /* ===== AI Strategy Assistant ===== */
@@ -481,10 +481,10 @@ body {
   font-weight: 600;
 }
 
-/* ===== Car & Field Visualizations ===== */
+/* ===== Visualizations ===== */
 .car-visualization,
-.field-visualization {
-  height: 180px;
+.track-visualization {
+  height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -492,16 +492,17 @@ body {
   border: 1px solid var(--border);
   border-radius: 12px;
   margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .car-placeholder,
-.field-placeholder {
+.track-placeholder {
   text-align: center;
   color: var(--blue-primary);
 }
 
 .car-icon,
-.field-icon {
+.track-icon {
   width: 48px;
   height: 48px;
   background: var(--blue-bg);
@@ -523,7 +524,7 @@ body {
   border-radius: 6px;
 }
 
-.field-icon::before {
+.track-icon::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -537,11 +538,76 @@ body {
 }
 
 .car-placeholder p,
-.field-placeholder p {
+.track-placeholder p {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-secondary);
 }
+
+/* ===== Right Panel Sections ===== */
+.car-section,
+.field-section {
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.section-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--glass-strong);
+}
+
+.section-content {
+  padding: 16px;
+}
+
+.car-icon-header {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-blue);
+  border: 1px solid var(--blue-border);
+  border-radius: 10px;
+  position: relative;
+}
+
+.car-icon-header::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 12px;
+  background: var(--blue-primary);
+  border-radius: 6px;
+}
+
+.field-icon-header {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-blue);
+  border: 1px solid var(--blue-border);
+  border-radius: 10px;
+  position: relative;
+}
+
+.field-icon-header::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: var(--blue-primary);
+  border-radius: 4px;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 70% 100%, 0% 100%);
+}
+
+
 
 /* ===== Twin Data ===== */
 .twin-data {
@@ -549,13 +615,12 @@ body {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
-  max-height: 200px;
-  overflow-y: auto;
+  margin-top: 16px;
 }
 
 .data-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
@@ -903,22 +968,16 @@ body {
 
   .dashboard-container {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    height: auto;
   }
 
   .panel-ai {
     grid-column: 1;
-    grid-row: 1;
   }
 
-  .panel-car {
+  .panel-right {
     grid-column: 1;
-    grid-row: 2;
-  }
-
-  .panel-field {
-    grid-column: 1;
-    grid-row: 3;
+    overflow-y: visible;
   }
 }
 
