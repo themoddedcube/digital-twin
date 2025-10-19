@@ -17,8 +17,10 @@ from datetime import datetime
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
-from twin_model import DigitalTwin, FieldTwin, create_sample_race_state
-from telemetry_feed import TelemetryGenerator, TelemetryStreamer
+import sys
+sys.path.insert(0, 'src')
+
+from compat_layer import DigitalTwin, FieldTwin, create_sample_race_state, TelemetryGenerator, TelemetryStreamer
 from ai_strategist import AIStrategist
 from hpc_orchestrator import HPCOrchestrator
 

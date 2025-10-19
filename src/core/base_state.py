@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 from contextlib import contextmanager
 
-from interfaces import StateManager, StateConsistencyError
+from core.interfaces import StateManager, StateConsistencyError
 from utils.config import get_config
 
 

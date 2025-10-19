@@ -11,8 +11,8 @@ from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, List, Optional, Tuple
 from collections import defaultdict, deque
 
-from base_twin import BaseTwinModel
-from interfaces import TwinModelError
+from core.base_twin import BaseTwinModel
+from core.interfaces import TwinModelError
 from utils.config import get_config
 
 

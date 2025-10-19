@@ -9,10 +9,10 @@ import time
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 
-from base_twin import BaseTwinModel
-from interfaces import TwinModelError
+from core.base_twin import BaseTwinModel
+from core.interfaces import TwinModelError
 from utils.config import get_config
-from schemas import validate_json_schema, CAR_TWIN_SCHEMA
+from core.schemas import validate_json_schema, CAR_TWIN_SCHEMA
 import json
 
 

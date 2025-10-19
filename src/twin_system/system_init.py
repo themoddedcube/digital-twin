@@ -10,13 +10,13 @@ import sys
 from pathlib import Path
 from typing import Dict, Any, Optional, Type
 
-from interfaces import (
+from core.interfaces import (
     TelemetryProcessor, TwinModel, StateManager, ConfigurationManager,
     TelemetryValidationError, StateConsistencyError, ConfigurationError
 )
-from base_telemetry import BaseTelemetryProcessor
-from base_twin import BaseTwinModel
-from base_state import BaseStateManager
+from core.base_telemetry import BaseTelemetryProcessor
+from core.base_twin import BaseTwinModel
+from core.base_state import BaseStateManager
 from utils.config import SystemConfig, load_config_file
 
 

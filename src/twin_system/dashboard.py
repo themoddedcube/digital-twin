@@ -11,10 +11,10 @@ from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, Optional, List
 from pathlib import Path
 
-from base_state import BaseStateManager
-from interfaces import StateManager, StateConsistencyError
+from core.base_state import BaseStateManager
+from core.interfaces import StateManager, StateConsistencyError
 from utils.config import get_config
-from system_recovery import SystemRecoveryManager, RecoveryLevel, AuditEventType
+from twin_system.system_recovery import SystemRecoveryManager, RecoveryLevel, AuditEventType
 
 
 class StateHandler(BaseStateManager):

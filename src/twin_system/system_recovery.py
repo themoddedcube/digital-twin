@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 from enum import Enum
 
-from interfaces import StateConsistencyError
+from core.interfaces import StateConsistencyError
 from utils.config import get_config
 
 

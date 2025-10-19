@@ -2,6 +2,9 @@
 
 A real-time F1 race strategy system powered by Modular's hybrid HPC engine and AI reasoning.
 
+**📚 Full Documentation:** See [`docs/`](docs/) directory  
+**⚡ Quick Start:** See [`docs/QUICK_START.md`](docs/QUICK_START.md)
+
 ## 🧩 System Architecture
 
 ### Three-Layer Brain Design
@@ -37,42 +40,38 @@ pip install -r requirements.txt
 
 ### Running the System
 
-#### Option 1: Full System (Recommended)
+#### Option 1: Validate System
 ```bash
-python run_system.py
+python validate_system.py
 ```
-This starts:
-- HPC Orchestrator (WebSocket server on port 8765)
-- Telemetry Feed Generator
-- Streamlit Dashboard (http://localhost:8501)
+Checks all components are working correctly.
 
-#### Option 2: Individual Components
-
-**Test the system:**
+#### Option 2: Test MAX Integration
 ```bash
-python test_system.py
+python test_max_integration.py
 ```
+Tests AI strategy recommendations with MAX LLM.
 
-**Run just the dashboard:**
+#### Option 3: Run Full Test Suite
 ```bash
-streamlit run src/dashboard.py
+python run_tests.py --category integration
 ```
 
-**Run telemetry feed:**
+#### Option 4: Start API Server (for external dashboard)
 ```bash
-python src/telemetry_feed.py
+python -m uvicorn twin_system.api_server:app --host 0.0.0.0 --port 8000
 ```
 
-## 📊 Dashboard Features
+## 📊 System Features
 
-The Streamlit dashboard provides:
+The F1 Race Twin Edge system provides:
 
-- **Race Overview**: Current lap, session type, track conditions
-- **Leaderboard**: Live race positions with tire/fuel data
-- **Digital Twin State**: Real-time car state and predictions
-- **AI Recommendations**: Prioritized strategy suggestions (Urgent/Moderate/Optional)
-- **Simulation Results**: Monte Carlo simulation outcomes
-- **Performance Metrics**: System performance monitoring
+- **Real-time Digital Twins**: CarTwin and FieldTwin state modeling
+- **Live Telemetry Processing**: WebSocket/UDP telemetry ingestion
+- **AI Strategy Recommendations**: MAX LLM-powered pit strategy advice (Urgent/Moderate/Optional)
+- **HPC Simulation**: Hybrid edge/cloud compute for Monte Carlo simulations
+- **REST API**: High-performance API for external dashboard integration
+- **State Persistence**: Auto-save every 5 seconds with recovery
 
 ## 🔧 Configuration
 
@@ -81,8 +80,11 @@ To use the AI strategist with MAX:
 
 1. Start MAX server:
 ```bash
-max serve llama-3.1-8b
+export HF_TOKEN="your-huggingface-token"
+max serve --model modularai/Llama-3.1-8B-Instruct-GGUF
 ```
+
+Wait for: `🚀 Server ready on http://0.0.0.0:8000`
 
 2. The system will automatically connect to `http://localhost:8000/v1`
 

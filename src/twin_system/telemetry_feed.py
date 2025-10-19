@@ -18,7 +18,7 @@ import logging
 from pathlib import Path
 from abc import ABC, abstractmethod
 
-from schemas import TELEMETRY_SCHEMA, validate_json_schema
+from core.schemas import TELEMETRY_SCHEMA, validate_json_schema
 from utils.config import load_config
 
 

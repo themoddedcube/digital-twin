@@ -10,7 +10,7 @@ import os
 from typing import Dict, Any, Optional
 from pathlib import Path
 
-from interfaces import ConfigurationManager, ConfigurationError
+from core.interfaces import ConfigurationManager, ConfigurationError
 
 
 class SystemConfig(ConfigurationManager):
@@ -157,7 +157,7 @@ class SystemConfig(ConfigurationManager):
                 "processing_timeout_ms": 250,
                 "validation_enabled": True,
                 "fallback_to_last_valid": True,
-                "output_file": "/shared/telemetry_state.json"
+                "output_file": "shared/telemetry_state.json"
             },
             "car_twin": {
                 "update_latency_ms": 200,
@@ -176,7 +176,7 @@ class SystemConfig(ConfigurationManager):
                 "backup_enabled": True,
                 "consistency_check_enabled": True,
                 "audit_logging_enabled": True,
-                "storage_path": "/shared"
+                "storage_path": "shared"
             },
             "api": {
                 "host": "localhost",
@@ -195,7 +195,7 @@ class SystemConfig(ConfigurationManager):
             "logging": {
                 "level": "INFO",
                 "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-                "file_path": "/shared/logs/f1_twin.log",
+                "file_path": "shared/logs/f1_twin.log",
                 "max_file_size_mb": 100,
                 "backup_count": 5
             }

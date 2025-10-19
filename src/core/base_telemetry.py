@@ -11,8 +11,8 @@ from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 from pathlib import Path
 
-from interfaces import TelemetryProcessor, TelemetryValidationError
-from schemas import validate_json_schema, get_schema
+from core.interfaces import TelemetryProcessor, TelemetryValidationError
+from core.schemas import validate_json_schema, get_schema
 from utils.config import get_config
 
 

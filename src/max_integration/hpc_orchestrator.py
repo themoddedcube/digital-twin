@@ -11,8 +11,8 @@ from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 from pathlib import Path
 
-from field_twin import FieldTwin
-from interfaces import TwinModelError
+from twin_system.field_twin import FieldTwin
+from core.interfaces import TwinModelError
 from utils.config import get_config
 
 

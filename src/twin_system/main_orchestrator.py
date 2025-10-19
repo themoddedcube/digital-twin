@@ -14,14 +14,14 @@ from typing import Dict, Any, Optional, List
 from pathlib import Path
 import logging
 
-from telemetry_feed import TelemetryIngestor
-from twin_model import CarTwin
-from field_twin import FieldTwin
-from dashboard import StateHandler, get_state_handler
-from api_server import create_app, run_server
-from system_monitor import SystemMonitor, get_system_monitor
+from twin_system.telemetry_feed import TelemetryIngestor
+from twin_system.twin_model import CarTwin
+from twin_system.field_twin import FieldTwin
+from twin_system.dashboard import StateHandler, get_state_handler
+from twin_system.api_server import create_app, run_server
+from twin_system.system_monitor import SystemMonitor, get_system_monitor
 from utils.config import get_config, load_config
-from interfaces import TwinModelError, StateConsistencyError
+from core.interfaces import TwinModelError, StateConsistencyError
 
 
 class ComponentManager:

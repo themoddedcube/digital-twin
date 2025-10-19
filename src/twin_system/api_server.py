@@ -22,10 +22,10 @@ import uvicorn
 from pydantic import BaseModel
 from typing import Union
 
-from dashboard import get_state_handler, StateHandler
-from system_monitor import get_system_monitor
+from twin_system.dashboard import get_state_handler, StateHandler
+from twin_system.system_monitor import get_system_monitor
 from utils.config import get_config
-from schemas import validate_json_schema, CAR_TWIN_SCHEMA, FIELD_TWIN_SCHEMA, TELEMETRY_SCHEMA
+from core.schemas import validate_json_schema, CAR_TWIN_SCHEMA, FIELD_TWIN_SCHEMA, TELEMETRY_SCHEMA
 
 
 class APICache:

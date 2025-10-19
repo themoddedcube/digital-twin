@@ -11,8 +11,8 @@ from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 from abc import abstractmethod
 
-from interfaces import TwinModel, TwinModelError
-from schemas import validate_json_schema
+from core.interfaces import TwinModel, TwinModelError
+from core.schemas import validate_json_schema
 from utils.config import get_config
 
 
