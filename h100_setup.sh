@@ -62,8 +62,8 @@ chmod +x deploy.sh
 
 # Set HF_TOKEN (you'll need to replace this with your actual token)
 echo "🔑 Setting up Hugging Face token..."
-export HF_TOKEN="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"
-echo "export HF_TOKEN=\"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\"" >> ~/.bashrc
+export HF_TOKEN="blah"
+echo "export HF_TOKEN=\"blah\"" >> ~/.bashrc
 
 # Build Docker image
 echo "🏗️ Building Docker image..."
