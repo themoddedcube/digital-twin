@@ -104,6 +104,7 @@ const resizer = new PanelResizer()
 // Import Three.js library
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 console.log('Three.js loaded:', THREE);
 console.log('GLTFLoader loaded:', GLTFLoader);
@@ -133,15 +134,16 @@ function initCar3D() {
   // Load F1 car model
   const loader = new GLTFLoader();
 
-  loader.load('./assets/models/f1-car.gltf', 
+  loader.load('./assets/models/scene.gltf', 
     (gltf) => {
       const car = gltf.scene;
       
       // Scale and position the car
-      car.scale.set(0.1, 0.1, 0.1); // Scale down if too big
-      car.position.set(0, 0, 0);
+      car.scale.set(1.5, 1.5, 1.5); // Scale down if too big
+      // car.position.set(0, 0, 0);
       
       scene.add(car);
+      // gltf.scene.scale.set(1.5,1.5,1.5) 
       
       // Auto-rotate animation
       function animate() {
@@ -153,10 +155,12 @@ function initCar3D() {
     });
   
   camera.position.z = 5;
+  camera.position.x = -1;
+  camera.position.y = 1;
   
   // Optional: Add OrbitControls for manual rotation
-  // const controls = new OrbitControls(camera, renderer.domElement);
-  // controls.enableDamping = true;
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
 }
 
 // Call when ready
@@ -271,9 +275,9 @@ updateCarData()
 // Handle window resize
 window.addEventListener("resize", () => {
   // Recalculate canvas sizes if 3D is implemented
-  // renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-  // camera.aspect = canvas.clientWidth / canvas.clientHeight;
-  // camera.updateProjectionMatrix();
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  camera.aspect = canvas.clientWidth / canvas.clientHeight;
+  camera.updateProjectionMatrix();
 })
 
 // console.log("[v0] F1 Dashboard initialized")
