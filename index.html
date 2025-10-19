@@ -4,88 +4,313 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>F1 Dashboard (Light Glass - Modern)</title>
+  <title>F1 Race Engineer - AI-Powered Strategy Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <!-- App container -->
   <div id="app-container" class="app-container">
 
-    <!-- Title bar -->
-    <div class="title-bar" id="title-bar">
-      <h1>F1 Data Visualization Dashboard</h1>
-    </div>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <div class="logo-icon"></div>
+          <div class="logo-text">
+            <h1>F1 Race Engineer</h1>
+            <p>AI-Powered Strategy Dashboard</p>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          <span>Live Session</span>
+        </div>
+        <button class="config-btn" id="pre-race-config-btn">
+          <span class="config-icon"></span>
+          <span>Pre-Race Config</span>
+        </button>
+      </div>
+    </header>
 
-    <!-- Panels -->
-    <div class="panels-container">
-      <!-- Left: LLM Output -->
-      <section class="panel panel-llm" id="panel-llm">
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+      <!-- Left Panel: AI Strategy Assistant -->
+      <section class="panel panel-ai" id="panel-ai">
         <header class="panel-header">
-          <h2>LLM HPC Layer Outputs</h2>
+          <div class="panel-title">
+            <div class="panel-icon"></div>
+            <div>
+              <h2>AI Strategy Assistant</h2>
+              <p>Real-time recommendations</p>
+            </div>
+          </div>
         </header>
         <div class="panel-content">
-          <ul class="output-list">
-            <li><span class="bullet">▸</span><span class="text">Optimize tire strategy: Medium compound for next 15
-                laps.</span></li>
-            <li><span class="bullet">▸</span><span class="text">Driver feedback: Monitor turn 3 understeer.</span></li>
-            <li><span class="bullet">▸</span><span class="text">Engine performance: Slight power curve decline,
-                maintenance needed.</span></li>
-            <li><span class="bullet">▸</span><span class="text">Fuel management: Rain probability increasing, target lap
-                40 pit for refueling.</span></li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- Right Top: Car Twin -->
-      <section class="panel panel-car" id="panel-car">
-        <header class="panel-header">
-          <h2>Car Digital Twin</h2>
-        </header>
-        <div class="panel-content panel-split">
-          <div class="visual-surface">
-            <canvas id="car-3d-canvas" class="canvas-3d"></canvas>
-          </div>
-          <div class="stats-surface">
-            <div class="data-grid">
-              <div class="data-item"><span class="data-label">Speed</span><span class="data-value" id="speed">325
-                  km/h</span></div>
-              <div class="data-item"><span class="data-label">RPM</span><span class="data-value" id="rpm">18,000 <span
-                    class="temp">(95°C)</span></span></div>
-              <div class="data-item"><span class="data-label">Fuel</span><span class="data-value" id="fuel">80% <span
-                    class="temp">(28/60L)</span></span></div>
+          <div class="recommendations-list">
+            <div class="recommendation-card">
+              <div class="recommendation-icon warning"></div>
+              <div class="recommendation-content">
+                <h3>Tire Strategy Recommendation</h3>
+                <p>Based on current tire degradation and track temperature rising to 42°C, recommend pit stop in 3-4
+                  laps for medium compound.</p>
+                <div class="confidence-score">94%</div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <!-- Right Bottom: Field Twin -->
-      <section class="panel panel-field" id="panel-field">
-        <header class="panel-header">
-          <h2>Field Digital Twin</h2>
-        </header>
-        <div class="panel-content panel-split">
-          <div class="visual-surface">
-            <div class="canvas-placeholder">
-              <p>🏁</p>
-              <p class="placeholder-text">Track Visualization</p>
-              <p class="placeholder-hint">Animated Cars / Flags</p>
+            <div class="recommendation-card">
+              <div class="recommendation-icon fuel"></div>
+              <div class="recommendation-content">
+                <h3>Fuel Management Alert</h3>
+                <p>Current fuel consumption rate is 2% above optimal. Suggest adjusting engine mode to lean mix on
+                  straights.</p>
+                <div class="confidence-score">87%</div>
+              </div>
             </div>
-          </div>
-          <div class="stats-surface">
-            <div class="data-grid">
-              <div class="data-item"><span class="data-label">Rival Gap</span><span class="data-value"
-                  id="rival-gap">—</span></div>
-              <div class="data-item"><span class="data-label">Pit Probability</span><span class="data-value"
-                  id="pit-prob">—</span></div>
-              <div class="data-item"><span class="data-label">Track Temp</span><span class="data-value"
-                  id="track-temp">—</span></div>
-              <div class="data-item"><span class="data-label">Flags</span><span class="data-value" id="flags">—</span>
+
+            <div class="recommendation-card">
+              <div class="recommendation-icon brain"></div>
+              <div class="recommendation-content">
+                <h3>Overtaking Opportunity</h3>
+                <p>Opponent showing reduced pace in sector 2. DRS advantage presents overtaking window at turn 12 in
+                  next 2 laps.</p>
+                <div class="confidence-score">91%</div>
+              </div>
+            </div>
+
+            <div class="recommendation-card">
+              <div class="recommendation-icon success"></div>
+              <div class="recommendation-content">
+                <h3>Strategy On Track</h3>
+                <p>Current pace and tire management aligns perfectly with planned 2-stop strategy. Maintain current
+                  delta.</p>
+                <div class="confidence-score">96%</div>
+              </div>
+            </div>
+
+            <div class="recommendation-card">
+              <div class="recommendation-icon weather"></div>
+              <div class="recommendation-content">
+                <h3>Weather Update Impact</h3>
+                <p>Cloud cover increasing. Track temperature may drop 3-5°C in next 15 minutes. Monitor tire pressure
+                  adjustments.</p>
+                <div class="confidence-score">82%</div>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      <!-- Right Top: Car Digital Twin -->
+      <section class="panel panel-car" id="panel-car">
+        <header class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon"></div>
+            <div>
+              <h2>Car Digital Twin</h2>
+              <p>Live telemetry data</p>
+            </div>
+          </div>
+        </header>
+        <div class="panel-content">
+          <div class="car-visualization">
+            <div class="car-placeholder">
+              <div class="car-icon"></div>
+              <p>3D Model Visualization</p>
+            </div>
+          </div>
+          <div class="twin-data">
+            <div class="data-grid">
+              <div class="data-item">
+                <span class="data-label">Speed</span>
+                <span class="data-value" id="speed">325 km/h</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">RPM</span>
+                <span class="data-value" id="rpm">18,000</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Fuel</span>
+                <span class="data-value" id="fuel">80%</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Temperature</span>
+                <span class="data-value" id="temperature">95°C</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Gear</span>
+                <span class="data-value" id="gear">8th</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Throttle</span>
+                <span class="data-value" id="throttle">87%</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Brake</span>
+                <span class="data-value" id="brake">12%</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">DRS</span>
+                <span class="data-value" id="drs">Available</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Bottom: Field Digital Twin -->
+      <section class="panel panel-field" id="panel-field">
+        <header class="panel-header">
+          <div class="panel-title">
+            <div class="panel-icon"></div>
+            <div>
+              <h2>Field Digital Twin</h2>
+              <p>Track conditions & competitors</p>
+            </div>
+          </div>
+        </header>
+        <div class="panel-content">
+          <div class="field-visualization">
+            <div class="field-placeholder">
+              <div class="field-icon"></div>
+              <p>Track Overview</p>
+            </div>
+          </div>
+          <div class="twin-data">
+            <div class="data-grid">
+              <div class="data-item">
+                <span class="data-label">Track Temp</span>
+                <span class="data-value" id="track-temp">42°C</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Gap to Leader</span>
+                <span class="data-value" id="gap-leader">+1.2s</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Position</span>
+                <span class="data-value" id="position">P3</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Flags</span>
+                <span class="data-value" id="flags">Green</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Lap Time</span>
+                <span class="data-value" id="lap-time">1:23.456</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Sector 1</span>
+                <span class="data-value" id="sector1">28.123</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Sector 2</span>
+                <span class="data-value" id="sector2">32.456</span>
+              </div>
+              <div class="data-item">
+                <span class="data-label">Sector 3</span>
+                <span class="data-value" id="sector3">22.877</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Pre-Race Configuration Modal -->
+  <div class="modal-overlay" id="pre-race-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Pre-Race Configuration</h2>
+        <p>Configure driver profiles for AI strategy recommendations.</p>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+
+      <div class="modal-content">
+        <!-- Current Driver Section -->
+        <div class="driver-section current-driver">
+          <div class="driver-header">
+            <div class="driver-icon"></div>
+            <div>
+              <h3>Current Driver</h3>
+              <p>Your driver profile</p>
+            </div>
+          </div>
+
+          <div class="driver-notes">
+            <h4>Driver Notes</h4>
+            <textarea placeholder="Add notes about current driver strengths, weaknesses, preferences..."></textarea>
+          </div>
+
+          <div class="behavioral-params">
+            <h4>Behavioral Parameters</h4>
+
+            <div class="param-group">
+              <div class="param-label">
+                <span>Aggressiveness</span>
+                <small>Willingness to take risks & defend position</small>
+              </div>
+              <div class="param-control">
+                <input type="range" min="0" max="10" value="7" class="slider" id="current-aggressiveness">
+                <div class="param-value">High 7</div>
+              </div>
+            </div>
+
+            <div class="param-group">
+              <div class="param-label">
+                <span>Steering Ability</span>
+                <small>Precision and smoothness in cornering</small>
+              </div>
+              <div class="param-control">
+                <input type="range" min="0" max="10" value="8" class="slider" id="current-steering">
+                <div class="param-value">High 8</div>
+              </div>
+            </div>
+
+            <div class="param-group">
+              <div class="param-label">
+                <span>Flexibility</span>
+                <small>Ability to adapt to strategy changes</small>
+              </div>
+              <div class="param-control">
+                <input type="range" min="0" max="10" value="6" class="slider" id="current-flexibility">
+                <div class="param-value">Medium 6</div>
+              </div>
+            </div>
+
+            <div class="param-group">
+              <div class="param-label">
+                <span>Accuracy</span>
+                <small>Following optimal racing lines & braking points</small>
+              </div>
+              <div class="param-control">
+                <input type="range" min="0" max="10" value="9" class="slider" id="current-accuracy">
+                <div class="param-value">Expert 9</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opponent Driver Section -->
+        <div class="driver-section opponent-driver">
+          <div class="driver-header">
+            <div class="driver-icon"></div>
+            <div>
+              <h3>Opponent Driver</h3>
+              <p>Competitor analysis</p>
+            </div>
+          </div>
+
+          <div class="driver-notes">
+            <h4>Opponent Analysis & Notes</h4>
+            <textarea
+              placeholder="Add detailed notes about opponent driver characteristics, racing style, typical strategies, strengths, weaknesses, past race behavior, preferred overtaking tactics, defensive driving patterns..."></textarea>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
