@@ -26,6 +26,9 @@ from twin_system.dashboard import get_state_handler, StateHandler
 from twin_system.system_monitor import get_system_monitor
 from utils.config import get_config
 from core.schemas import validate_json_schema, CAR_TWIN_SCHEMA, FIELD_TWIN_SCHEMA, TELEMETRY_SCHEMA
+from max_integration.monte_carlo_handler import get_monte_carlo_handler
+from max_integration.ai_strategist import AIStrategist
+from max_integration.continuous_ai_service import get_continuous_ai_service
 
 
 class APICache:
@@ -216,6 +219,8 @@ api_metrics = APIMetrics()
 schema_manager = SchemaVersionManager()
 connection_manager = ConcurrentAccessManager()
 state_handler: Optional[StateHandler] = None
+monte_carlo_handler = get_monte_carlo_handler()
+ai_strategist: Optional[AIStrategist] = None
 
 
 @asynccontextmanager
@@ -230,6 +235,25 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"API Server: Failed to initialize state handler: {e}")
         state_handler = None
+    
+    # Initialize AI strategist separately (non-blocking)
+    try:
+        # Add timeout to prevent hanging
+        import signal
+        
+        def timeout_handler(signum, frame):
+            raise TimeoutError("AI strategist initialization timed out")
+        
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(5)  # 5 second timeout
+        
+        ai_strategist = AIStrategist()
+        signal.alarm(0)  # Cancel timeout
+        print("API Server: AI strategist initialized")
+    except Exception as e:
+        signal.alarm(0)  # Cancel timeout
+        print(f"API Server: AI strategist initialization failed (will use fallback): {e}")
+        ai_strategist = None
     
     yield
     
@@ -829,6 +853,427 @@ async def get_concurrent_status():
     }
 
 
+@app.get("/api/v1/monte-carlo/simulate", response_model=Dict[str, Any])
+async def run_monte_carlo_simulation(request: Request):
+    """
+    Run Monte Carlo simulation for pit strategy optimization.
+    
+    Query Parameters:
+        pit_window_start: Start of pit window (optional)
+        pit_window_end: End of pit window (optional)
+    
+    Returns:
+        Monte Carlo simulation results with best strategy
+    """
+    if not state_handler:
+        raise HTTPException(status_code=503, detail="State handler not available")
+    
+    def fetch_simulation():
+        try:
+            # Get current telemetry data
+            telemetry_data = state_handler.get_telemetry_state()
+            if not telemetry_data:
+                return {
+                    "success": False,
+                    "message": "No telemetry data available for simulation",
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                }
+            
+            # Build race state from telemetry
+            car_data = telemetry_data.get("cars", [{}])[0] if telemetry_data.get("cars") else {}
+            race_state = {
+                "current_lap": telemetry_data.get("lap", 0),
+                "tire_wear": car_data.get("tire_wear", 0.5),
+                "fuel_level": car_data.get("fuel_level", 0.5),
+                "tire_compound": car_data.get("tire_compound", "medium"),
+                "track_temp": telemetry_data.get("track_temperature", 25.0),
+                "position": car_data.get("position", 1)
+            }
+            
+            # Get pit window from query parameters
+            pit_window_start = request.query_params.get("pit_window_start")
+            pit_window_end = request.query_params.get("pit_window_end")
+            
+            if pit_window_start:
+                pit_window_start = int(pit_window_start)
+            if pit_window_end:
+                pit_window_end = int(pit_window_end)
+            
+            # Run Monte Carlo simulation
+            results = monte_carlo_handler.run_simulation(
+                race_state, pit_window_start, pit_window_end
+            )
+            
+            # Get best strategy
+            best_strategy = monte_carlo_handler.get_best_strategy(results)
+            
+            # Convert results to dict format
+            results_dict = []
+            for result in results:
+                results_dict.append({
+                    "pit_lap": result.pit_lap,
+                    "final_position": result.final_position,
+                    "total_time": result.total_time,
+                    "success_probability": result.success_probability,
+                    "tire_life_remaining": result.tire_life_remaining,
+                    "fuel_laps_remaining": result.fuel_laps_remaining
+                })
+            
+            best_strategy_dict = None
+            if best_strategy:
+                best_strategy_dict = {
+                    "pit_lap": best_strategy.pit_lap,
+                    "final_position": best_strategy.final_position,
+                    "total_time": best_strategy.total_time,
+                    "success_probability": best_strategy.success_probability,
+                    "tire_life_remaining": best_strategy.tire_life_remaining,
+                    "fuel_laps_remaining": best_strategy.fuel_laps_remaining
+                }
+            
+            return {
+                "success": True,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "race_state": race_state,
+                "simulation_results": results_dict,
+                "best_strategy": best_strategy_dict,
+                "simulation_stats": monte_carlo_handler.get_simulation_stats(),
+                "metadata": {
+                    "total_strategies": len(results),
+                    "pit_window": {
+                        "start": pit_window_start or race_state["current_lap"] + 1,
+                        "end": pit_window_end or race_state["current_lap"] + 10
+                    }
+                }
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e),
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+    
+    return get_cached_or_fetch("monte_carlo_simulation", fetch_simulation, request)
+
+
+@app.get("/api/v1/ai-strategy/recommendations", response_model=Dict[str, Any])
+async def get_ai_strategy_recommendations(request: Request):
+    """
+    Get AI strategy recommendations based on Monte Carlo simulation results.
+    
+    Returns:
+        AI-generated strategy recommendations or fallback recommendations
+    """
+    if not state_handler:
+        raise HTTPException(status_code=503, detail="State handler not available")
+    
+    def fetch_recommendations():
+        try:
+            # Get current system state
+            car_twin_data = state_handler.get_car_twin_state()
+            field_twin_data = state_handler.get_field_twin_state()
+            telemetry_data = state_handler.get_telemetry_state()
+            
+            # Run Monte Carlo simulation first
+            car_data = telemetry_data.get("cars", [{}])[0] if telemetry_data.get("cars") else {}
+            race_state = {
+                "current_lap": telemetry_data.get("lap", 0),
+                "tire_wear": car_data.get("tire_wear", 0.5),
+                "fuel_level": car_data.get("fuel_level", 0.5),
+                "tire_compound": car_data.get("tire_compound", "medium"),
+                "track_temp": telemetry_data.get("track_temperature", 25.0),
+                "position": car_data.get("position", 1)
+            }
+            
+            # Run simulation
+            simulation_results = monte_carlo_handler.run_simulation(race_state)
+            best_strategy = monte_carlo_handler.get_best_strategy(simulation_results)
+            
+            # Prepare data for AI strategist
+            strategy_data = {
+                "car_twin": car_twin_data,
+                "field_twin": field_twin_data,
+                "simulation_results": [
+                    {
+                        "pit_lap": result.pit_lap,
+                        "final_position": result.final_position,
+                        "total_time": result.total_time,
+                        "success_probability": result.success_probability
+                    }
+                    for result in simulation_results
+                ],
+                "race_context": {
+                    "lap": race_state["current_lap"],
+                    "session_type": telemetry_data.get("session_type", "race")
+                }
+            }
+            
+            # Generate AI recommendations (synchronous for now)
+            if ai_strategist:
+                try:
+                    import asyncio
+                    try:
+                        loop = asyncio.get_event_loop()
+                    except RuntimeError:
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                    
+                    recommendations = loop.run_until_complete(
+                        ai_strategist.generate_recommendations(strategy_data)
+                    )
+                except Exception as e:
+                    print(f"AI strategist failed, using fallback: {e}")
+                    recommendations = _generate_fallback_recommendations(simulation_results, race_state)
+            else:
+                # Generate fallback recommendations when AI strategist is not available
+                recommendations = _generate_fallback_recommendations(simulation_results, race_state)
+            
+            return {
+                "success": True,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "recommendations": recommendations,
+                "simulation_context": {
+                    "best_strategy": {
+                        "pit_lap": best_strategy.pit_lap,
+                        "final_position": best_strategy.final_position,
+                        "total_time": best_strategy.total_time,
+                        "success_probability": best_strategy.success_probability
+                    } if best_strategy else None,
+                    "total_strategies": len(simulation_results),
+                    "race_state": race_state
+                },
+                "metadata": {
+                    "ai_strategist_available": ai_strategist is not None,
+                    "recommendation_source": "ai_strategist" if ai_strategist else "fallback",
+                    "monte_carlo_stats": monte_carlo_handler.get_simulation_stats()
+                }
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e),
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+    
+    return get_cached_or_fetch("ai_strategy_recommendations", fetch_recommendations, request)
+
+
+def _generate_fallback_recommendations(simulation_results, race_state):
+    """Generate fallback recommendations when AI strategist is not available."""
+    recommendations = []
+    
+    if not simulation_results:
+        return [{
+            "priority": "urgent",
+            "category": "general",
+            "title": "No Simulation Data Available",
+            "description": "Unable to generate recommendations - no simulation data available",
+            "confidence": 0.0,
+            "expected_benefit": "Manual strategy required",
+            "execution_lap": None,
+            "reasoning": "No simulation data to analyze",
+            "risks": ["No AI guidance available"],
+            "alternatives": ["Manual strategy decisions"]
+        }]
+    
+    # Get best strategy from simulation results
+    best_strategy = min(simulation_results, key=lambda x: x.total_time if hasattr(x, 'total_time') else x.get("total_time", float('inf')))
+    
+    # Generate basic recommendations based on simulation results
+    recommendations.append({
+        "priority": "moderate",
+        "category": "pit_strategy",
+        "title": f"Recommended Pit Strategy",
+        "description": f"Pit on lap {best_strategy.pit_lap if hasattr(best_strategy, 'pit_lap') else best_strategy.get('pit_lap', 'Unknown')} for optimal result",
+        "confidence": best_strategy.success_probability if hasattr(best_strategy, 'success_probability') else best_strategy.get("success_probability", 0.8),
+        "expected_benefit": f"Position {best_strategy.final_position if hasattr(best_strategy, 'final_position') else best_strategy.get('final_position', 'Unknown')}",
+        "execution_lap": best_strategy.pit_lap if hasattr(best_strategy, 'pit_lap') else best_strategy.get("pit_lap"),
+        "reasoning": f"Simulation shows this is the optimal strategy with {(best_strategy.success_probability if hasattr(best_strategy, 'success_probability') else best_strategy.get('success_probability', 0.8)):.1%} success probability",
+        "risks": ["Strategy may not account for race dynamics"],
+        "alternatives": ["Alternative pit windows available"]
+    })
+    
+    # Add tire management recommendation
+    tire_wear = race_state.get("tire_wear", 0.5)
+    if tire_wear > 0.7:
+        recommendations.append({
+            "priority": "urgent",
+            "category": "tire_management",
+            "title": "High Tire Wear Alert",
+            "description": f"Tire wear at {tire_wear:.1%} - monitor closely for pit window",
+            "confidence": 0.9,
+            "expected_benefit": "Prevent tire failure",
+            "execution_lap": race_state.get("current_lap", 0) + 1,
+            "reasoning": "Tire wear approaching critical level",
+            "risks": ["Tire failure if delayed"],
+            "alternatives": ["Extend stint if track position critical"]
+        })
+    
+    # Add fuel management recommendation
+    fuel_level = race_state.get("fuel_level", 0.5)
+    if fuel_level < 0.3:
+        recommendations.append({
+            "priority": "urgent",
+            "category": "fuel_saving",
+            "title": "Low Fuel Alert",
+            "description": f"Fuel level at {fuel_level:.1%} - consider fuel saving mode",
+            "confidence": 0.85,
+            "expected_benefit": "Complete race distance",
+            "execution_lap": race_state.get("current_lap", 0),
+            "reasoning": "Fuel level critically low",
+            "risks": ["Running out of fuel"],
+            "alternatives": ["Pit for fuel if necessary"]
+        })
+    
+    return recommendations
+
+
+@app.get("/api/v1/monte-carlo/stats", response_model=Dict[str, Any])
+async def get_monte_carlo_stats():
+    """
+    Get Monte Carlo simulation statistics.
+    
+    Returns:
+        Simulation statistics and performance metrics
+    """
+    try:
+        stats = monte_carlo_handler.get_simulation_stats()
+        
+        return {
+            "success": True,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "monte_carlo_stats": stats,
+            "handler_info": {
+                "simulation_count_per_run": monte_carlo_handler.simulation_count,
+                "last_simulation_time": monte_carlo_handler.last_simulation_time
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
+
+@app.get("/api/v1/continuous-ai/recommendations", response_model=Dict[str, Any])
+async def get_continuous_ai_recommendations(request: Request):
+    """
+    Get AI strategy recommendations from the continuously running service.
+    
+    This endpoint returns recommendations generated by the background service
+    that runs Monte Carlo simulations every 2 seconds and feeds them to MAX.
+    """
+    try:
+        continuous_ai_service = get_continuous_ai_service()
+        
+        # Get latest recommendations
+        recommendations = continuous_ai_service.get_latest_recommendations()
+        race_state = continuous_ai_service.get_latest_race_state()
+        service_status = continuous_ai_service.get_service_status()
+        
+        return {
+            "success": True,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "recommendations": recommendations,
+            "race_state": race_state,
+            "service_status": service_status,
+            "metadata": {
+                "source": "continuous_ai_service",
+                "simulation_count": service_status.get("simulation_count", 0),
+                "last_update": service_status.get("last_simulation_time"),
+                "queue_size": service_status.get("queue_size", 0)
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
+
+@app.get("/api/v1/continuous-ai/status", response_model=Dict[str, Any])
+async def get_continuous_ai_status():
+    """
+    Get the status of the continuous AI service.
+    
+    Returns information about the background service including
+    simulation count, queue size, and service health.
+    """
+    try:
+        continuous_ai_service = get_continuous_ai_service()
+        service_status = continuous_ai_service.get_service_status()
+        
+        return {
+            "success": True,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "service_status": service_status,
+            "health": "healthy" if service_status.get("is_running", False) else "stopped"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
+
+@app.post("/api/v1/continuous-ai/start", response_model=Dict[str, Any])
+async def start_continuous_ai_service():
+    """
+    Start the continuous AI service.
+    
+    This will begin the background service that runs Monte Carlo simulations
+    every 2 seconds and feeds them to the MAX model.
+    """
+    try:
+        continuous_ai_service = get_continuous_ai_service()
+        await continuous_ai_service.start()
+        
+        return {
+            "success": True,
+            "message": "Continuous AI service started",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
+
+@app.post("/api/v1/continuous-ai/stop", response_model=Dict[str, Any])
+async def stop_continuous_ai_service():
+    """
+    Stop the continuous AI service.
+    
+    This will stop the background service and free up resources.
+    """
+    try:
+        continuous_ai_service = get_continuous_ai_service()
+        await continuous_ai_service.stop()
+        
+        return {
+            "success": True,
+            "message": "Continuous AI service stopped",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
+
 # Error handlers
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
@@ -847,7 +1292,10 @@ async def not_found_handler(request: Request, exc):
                 "/api/v1/system/complete",
                 "/api/v1/version",
                 "/api/v1/metrics",
-                "/api/v1/concurrent-status"
+                "/api/v1/concurrent-status",
+                "/api/v1/monte-carlo/simulate",
+                "/api/v1/monte-carlo/stats",
+                "/api/v1/ai-strategy/recommendations"
             ],
             "schema_versioning": {
                 "supported_versions": SUPPORTED_SCHEMA_VERSIONS,
@@ -894,7 +1342,7 @@ def run_server(host: str = None, port: int = None, reload: bool = False):
     
     # Configure uvicorn
     uvicorn.run(
-        "api_server:app",
+        "twin_system.api_server:app",
         host=server_host,
         port=server_port,
         reload=reload,

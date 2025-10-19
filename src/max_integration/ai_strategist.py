@@ -321,15 +321,15 @@ Focus on immediate tactical decisions that the race engineer can communicate to 
         
         # Analyze simulation results
         if simulation_results:
-            best_result = min(simulation_results, key=lambda x: x.get('total_time', float('inf')))
+            best_result = min(simulation_results, key=lambda x: x.total_time if hasattr(x, 'total_time') else x.get('total_time', float('inf')))
             recommendations.append({
                 "priority": "moderate",
                 "category": "pit_strategy",
                 "title": f"MODERATE: Optimal Pit Strategy",
-                "description": f"Pit on lap {best_result.get('pit_lap', 'Unknown')} for best result",
-                "confidence": best_result.get('success_probability', 0.8),
-                "expected_benefit": f"Position {best_result.get('final_position', 'Unknown')}",
-                "execution_lap": best_result.get('pit_lap'),
+                "description": f"Pit on lap {best_result.pit_lap if hasattr(best_result, 'pit_lap') else best_result.get('pit_lap', 'Unknown')} for best result",
+                "confidence": best_result.success_probability if hasattr(best_result, 'success_probability') else best_result.get('success_probability', 0.8),
+                "expected_benefit": f"Position {best_result.final_position if hasattr(best_result, 'final_position') else best_result.get('final_position', 'Unknown')}",
+                "execution_lap": best_result.pit_lap if hasattr(best_result, 'pit_lap') else best_result.get('pit_lap'),
                 "reasoning": "Simulation shows this is the optimal strategy",
                 "risks": ["Strategy may not account for race dynamics"],
                 "alternatives": ["Alternative pit windows available"]

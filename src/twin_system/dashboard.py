@@ -168,6 +168,27 @@ class StateHandler(BaseStateManager):
                 self._telemetry_state.update(state_data)
                 self._last_telemetry_update = time.time()
                 
+                # Extract and update environment state from track conditions
+                track_conditions = state_data.get("track_conditions", {})
+                if track_conditions:
+                    environment_data = {
+                        "timestamp": state_data["last_update_timestamp"],
+                        "track_conditions": track_conditions,
+                        "track_status": track_conditions.get("track_status", "green"),
+                        "weather": {
+                            "condition": track_conditions.get("weather", "sunny"),
+                            "temperature": track_conditions.get("temperature", 25.0)
+                        },
+                        "flags": {
+                            "track_status": track_conditions.get("track_status", "green"),
+                            "session_type": state_data.get("session_type", "unknown")
+                        },
+                        "session_type": state_data.get("session_type", "unknown"),
+                        "lap": state_data.get("lap", 0),
+                        "update_source": "telemetry_ingestor"
+                    }
+                    self.update_environment_state(environment_data)
+                
                 # Log the update
                 if self.audit_logging_enabled:
                     self._log_audit_event("telemetry_state_updated", {
@@ -247,6 +268,28 @@ class StateHandler(BaseStateManager):
             Environment state data copy
         """
         with self._environment_lock:
+            # If environment state is empty, return default values
+            if not self._environment_state:
+                return {
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "track_conditions": {
+                        "temperature": 25.0,
+                        "weather": "sunny",
+                        "track_status": "green"
+                    },
+                    "track_status": "green",
+                    "weather": {
+                        "condition": "sunny",
+                        "temperature": 25.0
+                    },
+                    "flags": {
+                        "track_status": "green",
+                        "session_type": "unknown"
+                    },
+                    "session_type": "unknown",
+                    "lap": 0,
+                    "update_source": "default"
+                }
             return self._environment_state.copy()
     
     def get_complete_system_state(self) -> Dict[str, Any]:

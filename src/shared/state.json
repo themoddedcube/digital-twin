@@ -7,8 +7,8 @@
     "last_car_twin_update": 0,
     "last_field_twin_update": 0,
     "last_telemetry_update": 0,
-    "state_handler_timestamp": "2025-10-19T06:07:18.266663+00:00"
+    "state_handler_timestamp": "2025-10-19T08:59:35.879700+00:00"
   },
-  "persistence_timestamp": "2025-10-19T06:07:18.266708+00:00",
-  "persistence_count": 403
+  "persistence_timestamp": "2025-10-19T08:59:35.879720+00:00",
+  "persistence_count": 2468
 }

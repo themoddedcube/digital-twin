@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   f1-twin-edge:
-    image: ghcr.io/themoddedcube/f1-race-twin-edge:latest
+    image: f1-race-twin-edge:latest
     container_name: f1-twin-edge-app
     environment:
       HF_TOKEN: ${HF_TOKEN}
