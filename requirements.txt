@@ -1,0 +1,22 @@
+# Core dependencies
+streamlit>=1.28.0
+websockets>=11.0.3
+aiohttp>=3.9.0
+asyncio
+numpy>=1.24.0
+pandas>=2.0.0
+plotly>=5.17.0
+
+# Data handling
+python-dateutil>=2.8.2
+pydantic>=2.0.0
+
+# Optional: For production deployment
+uvicorn>=0.24.0
+fastapi>=0.104.0
+
+# Modular MAX and Mojo
+# Install from Modular's package index
+# pip install --pre modular --index-url https://dl.modular.com/public/nightly/python/simple/
+# Note: Uncomment line below only if installing from PyPI (not recommended for latest features)
+# modular>=25.7.0
