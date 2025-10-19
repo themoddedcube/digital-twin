@@ -43,7 +43,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-# Environments
+# Virtual environments
 .env
 .venv
 env/
@@ -52,18 +52,39 @@ ENV/
 env.bak/
 venv.bak/
 
+# Environment variables
+.env.local
+*.env
+
 # IDE
+.cursor/
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Cache
+.cache/
+*.cache
+
+# Temporary files
+*.tmp
+*.bak
+
 # F1 Twin System specific
 shared/*.db
 shared/*.json
 shared/logs/
 shared/recovery/
+shared/simulation_input.json
+shared/latest_state.json
 
 # OS generated files
 .DS_Store
@@ -72,4 +93,4 @@ shared/recovery/
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db
+Thumbs.db.env
