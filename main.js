@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron")
+const { app, BrowserWindow, ipcMain } = require("electron")
 const path = require("path")
 
 let mainWindow
@@ -7,46 +7,24 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
-    frame: false, // Frameless window
-    transparent: true, // Enable transparency
-    alwaysOnTop: true, // Float above other windows
-    resizable: true,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      backgroundThrottling: false, // Keep animations running
-      enableRemoteModule: true,
-      webSecurity: false, // Allow loading modules from node_modules
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
     },
   })
 
-  // Enable click-through for transparent areas (Windows/Linux)
-  if (process.platform === "win32" || process.platform === "linux") {
-    mainWindow.setIgnoreMouseEvents(false)
-  }
-
   mainWindow.loadFile("index.html")
 
-  // Open DevTools in development mode
-  if (process.argv.includes("--dev")) {
-    mainWindow.webContents.openDevTools()
-  }
-
-  mainWindow.on("closed", () => {
+  mainWindow.on("closed", function () {
     mainWindow = null
   })
 }
 
-app.whenReady().then(createWindow)
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit()
-  }
+app.on("ready", createWindow)
+app.on("window-all-closed", function () {
+  if (process.platform !== "darwin") app.quit()
 })
-
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
+app.on("activate", function () {
+  if (mainWindow === null) createWindow()
 })
