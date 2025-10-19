@@ -467,7 +467,7 @@ class Track3DVisualization {
   loadTrackModel() {
     const loader = new GLTFLoader();
     loader.load(
-      "./assets/models/f1-track.gltf",
+      "./assets/models/f1-car.gltf",
       (gltf) => {
         this.track = gltf.scene;
 
