@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  f1-twin-edge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: f1-twin-edge-app
+    environment:
+      HF_TOKEN: ${HF_TOKEN}
+    ports:
+      - "8000:8000" # API Server
+      - "8001:8001" # MAX LLM Server
+    volumes:
+      - ./shared:/app/shared # Persistent state
+      - ./config:/app/config # Configuration files
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
