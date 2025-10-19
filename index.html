@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>F1 Dashboard (Light Glass)</title>
+  <title>F1 Dashboard (Light Glass - Modern)</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <!-- App container (glass overlay, background stays transparent) -->
+  <!-- App container -->
   <div id="app-container" class="app-container">
     <!-- Window controls -->
     <div class="window-controls">
@@ -22,9 +22,9 @@
       <h1>F1 Data Visualization Dashboard</h1>
     </div>
 
-    <!-- Grid layout -->
+    <!-- Panels -->
     <div class="panels-container">
-      <!-- Left: LLM Strategy (spans rows) -->
+      <!-- Left: LLM Output -->
       <section class="panel panel-llm" id="panel-llm">
         <header class="panel-header">
           <h2>LLM HPC Layer Outputs</h2>
@@ -42,20 +42,14 @@
         </div>
       </section>
 
-      <!-- Right Top: Car Twin (3D + Data in one panel) -->
+      <!-- Right Top: Car Twin -->
       <section class="panel panel-car" id="panel-car">
         <header class="panel-header">
           <h2>Car Digital Twin</h2>
         </header>
         <div class="panel-content panel-split">
           <div class="visual-surface">
-            <!-- 3D canvas placeholder -->
             <canvas id="car-3d-canvas" class="canvas-3d"></canvas>
-            <div class="canvas-placeholder">
-              <p>🏎️</p>
-              <p class="placeholder-text">Car 3D Model</p>
-              <p class="placeholder-hint">Three.js Integration Point</p>
-            </div>
           </div>
           <div class="stats-surface">
             <div class="data-grid">
@@ -70,18 +64,17 @@
         </div>
       </section>
 
-      <!-- Right Bottom: Field Twin (Track + Data in one panel) -->
+      <!-- Right Bottom: Field Twin -->
       <section class="panel panel-field" id="panel-field">
         <header class="panel-header">
           <h2>Field Digital Twin</h2>
         </header>
         <div class="panel-content panel-split">
           <div class="visual-surface">
-            <!-- Field/Track placeholder -->
             <div class="canvas-placeholder">
               <p>🏁</p>
-              <p class="placeholder-text">Track / Competitor View</p>
-              <p class="placeholder-hint">Animated cars, gaps, flags</p>
+              <p class="placeholder-text">Track Visualization</p>
+              <p class="placeholder-hint">Animated Cars / Flags</p>
             </div>
           </div>
           <div class="stats-surface">
@@ -101,7 +94,15 @@
     </div>
   </div>
 
-  <!-- Renderer (unchanged) -->
+  <!-- Restore 3D Model Imports -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
   <script type="module" src="renderer.js"></script>
 </body>
 
