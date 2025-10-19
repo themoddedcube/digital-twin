@@ -90,8 +90,8 @@ class TelemetrySimulator:
     
     def generate_telemetry_update(self) -> Dict[str, Any]:
         """Generate a realistic telemetry update."""
-        # Update lap progression
-        if random.random() < 0.05:  # 5% chance to advance lap
+        # Update lap progression (DEMO: 4x faster lap progression)
+        if random.random() < 0.2:  # Was 5%, now 20% chance to advance lap
             self.current_lap += 1
             
         # Simulate track condition changes
@@ -111,50 +111,50 @@ class TelemetrySimulator:
         return telemetry_data
     
     def _update_track_conditions(self):
-        """Simulate realistic track condition changes."""
-        # Temperature variation
-        self.track_conditions["temperature"] += random.uniform(-0.5, 0.5)
-        self.track_conditions["temperature"] = max(15.0, min(50.0, self.track_conditions["temperature"]))
+        """Simulate realistic track condition changes (DEMO: More dramatic changes)."""
+        # Temperature variation (DEMO: 10x more dramatic)
+        self.track_conditions["temperature"] += random.uniform(-3.0, 3.0)  # Was ±0.5, now ±3.0
+        self.track_conditions["temperature"] = max(10.0, min(60.0, self.track_conditions["temperature"]))  # Wider range
         
-        # Weather changes (rare)
-        if random.random() < 0.001:  # 0.1% chance
-            weather_options = ["sunny", "cloudy", "drizzle"]
+        # Weather changes (DEMO: 100x more frequent)
+        if random.random() < 0.1:  # Was 0.1%, now 10% chance
+            weather_options = ["sunny", "cloudy", "drizzle", "rain"]
             self.track_conditions["weather"] = random.choice(weather_options)
         
-        # Track status changes (very rare)
-        if random.random() < 0.0005:  # 0.05% chance
-            status_options = ["green", "yellow", "safety_car"]
+        # Track status changes (DEMO: 200x more frequent)
+        if random.random() < 0.1:  # Was 0.05%, now 10% chance
+            status_options = ["green", "yellow", "safety_car", "red"]
             self.track_conditions["track_status"] = random.choice(status_options)
     
     def _update_car_data(self):
         """Update car data with realistic race progression."""
         for car in self.cars:
-            # Speed variation based on track conditions and tire wear
-            base_speed_variation = random.uniform(-5, 5)
-            tire_wear_penalty = car["tire"]["wear_level"] * 10
+            # Speed variation based on track conditions and tire wear (DEMO: 10x more dramatic)
+            base_speed_variation = random.uniform(-25, 25)  # Was ±5, now ±25
+            tire_wear_penalty = car["tire"]["wear_level"] * 50  # Was 10, now 50
             car["speed"] += base_speed_variation - tire_wear_penalty
-            car["speed"] = max(200, min(350, car["speed"]))
+            car["speed"] = max(180, min(380, car["speed"]))  # Wider range for demo
             
-            # Tire wear progression
-            car["tire"]["age"] += random.uniform(0, 0.1)
-            car["tire"]["wear_level"] += random.uniform(0, 0.005)
+            # Tire wear progression (DEMO: 20x faster degradation)
+            car["tire"]["age"] += random.uniform(0, 0.5)  # Was 0.1, now 0.5
+            car["tire"]["wear_level"] += random.uniform(0, 0.1)  # Was 0.005, now 0.1
             car["tire"]["wear_level"] = min(1.0, car["tire"]["wear_level"])
             
-            # Fuel consumption
-            car["fuel_level"] -= random.uniform(0.001, 0.003)
+            # Fuel consumption (DEMO: 10x faster consumption)
+            car["fuel_level"] -= random.uniform(0.01, 0.03)  # Was 0.001-0.003, now 0.01-0.03
             car["fuel_level"] = max(0.0, car["fuel_level"])
             
-            # Lap time variation
-            car["lap_time"] += random.uniform(-1.0, 1.0)
-            car["lap_time"] = max(70.0, min(95.0, car["lap_time"]))
+            # Lap time variation (DEMO: 5x more dramatic)
+            car["lap_time"] += random.uniform(-5.0, 5.0)  # Was ±1.0, now ±5.0
+            car["lap_time"] = max(65.0, min(100.0, car["lap_time"]))  # Wider range
             
-            # Update sector times
+            # Update sector times (DEMO: 3x more variation)
             for i in range(3):
-                car["sector_times"][i] += random.uniform(-0.5, 0.5)
-                car["sector_times"][i] = max(15.0, min(50.0, car["sector_times"][i]))
+                car["sector_times"][i] += random.uniform(-1.5, 1.5)  # Was ±0.5, now ±1.5
+                car["sector_times"][i] = max(12.0, min(55.0, car["sector_times"][i]))  # Wider range
             
-            # Position changes (rare)
-            if random.random() < 0.01:  # 1% chance
+            # Position changes (DEMO: 10x more frequent overtakes)
+            if random.random() < 0.1:  # Was 1%, now 10% chance
                 other_car = random.choice(self.cars)
                 if abs(car["position"] - other_car["position"]) == 1:
                     car["position"], other_car["position"] = other_car["position"], car["position"]
