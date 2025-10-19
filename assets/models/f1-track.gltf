@@ -151,19 +151,19 @@
 			"name":"Formula_1.002Action",
 			"samplers":[
 				{
-					"input":24,
-					"interpolation":"LINEAR",
-					"output":29
-				},
-				{
-					"input":24,
+					"input":29,
 					"interpolation":"LINEAR",
 					"output":30
 				},
 				{
-					"input":27,
-					"interpolation":"STEP",
+					"input":29,
+					"interpolation":"LINEAR",
 					"output":31
+				},
+				{
+					"input":32,
+					"interpolation":"STEP",
+					"output":33
 				}
 			]
 		}
@@ -568,9 +568,9 @@
 		{
 			"bufferView":24,
 			"componentType":5126,
-			"count":191,
+			"count":227,
 			"max":[
-				7.916666666666667
+				9.416666666666666
 			],
 			"min":[
 				0
@@ -580,13 +580,13 @@
 		{
 			"bufferView":25,
 			"componentType":5126,
-			"count":191,
+			"count":227,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":26,
 			"componentType":5126,
-			"count":191,
+			"count":227,
 			"type":"VEC4"
 		},
 		{
@@ -594,7 +594,7 @@
 			"componentType":5126,
 			"count":2,
 			"max":[
-				7.916666666666667
+				9.416666666666666
 			],
 			"min":[
 				0
@@ -610,17 +610,41 @@
 		{
 			"bufferView":29,
 			"componentType":5126,
-			"count":191,
-			"type":"VEC3"
+			"count":226,
+			"max":[
+				9.375
+			],
+			"min":[
+				0
+			],
+			"type":"SCALAR"
 		},
 		{
 			"bufferView":30,
 			"componentType":5126,
-			"count":191,
-			"type":"VEC4"
+			"count":226,
+			"type":"VEC3"
 		},
 		{
 			"bufferView":31,
+			"componentType":5126,
+			"count":226,
+			"type":"VEC4"
+		},
+		{
+			"bufferView":32,
+			"componentType":5126,
+			"count":2,
+			"max":[
+				9.375
+			],
+			"min":[
+				0
+			],
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":33,
 			"componentType":5126,
 			"count":2,
 			"type":"VEC3"
@@ -773,48 +797,58 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":764,
+			"byteLength":908,
 			"byteOffset":6251548
 		},
 		{
 			"buffer":0,
-			"byteLength":2292,
-			"byteOffset":6252312
+			"byteLength":2724,
+			"byteOffset":6252456
 		},
 		{
 			"buffer":0,
-			"byteLength":3056,
-			"byteOffset":6254604
+			"byteLength":3632,
+			"byteOffset":6255180
 		},
 		{
 			"buffer":0,
 			"byteLength":8,
-			"byteOffset":6257660
+			"byteOffset":6258812
 		},
 		{
 			"buffer":0,
 			"byteLength":24,
-			"byteOffset":6257668
+			"byteOffset":6258820
 		},
 		{
 			"buffer":0,
-			"byteLength":2292,
-			"byteOffset":6257692
+			"byteLength":904,
+			"byteOffset":6258844
 		},
 		{
 			"buffer":0,
-			"byteLength":3056,
-			"byteOffset":6259984
+			"byteLength":2712,
+			"byteOffset":6259748
+		},
+		{
+			"buffer":0,
+			"byteLength":3616,
+			"byteOffset":6262460
+		},
+		{
+			"buffer":0,
+			"byteLength":8,
+			"byteOffset":6266076
 		},
 		{
 			"buffer":0,
 			"byteLength":24,
-			"byteOffset":6263040
+			"byteOffset":6266084
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":6263064,
+			"byteLength":6266108,
 			"uri":"f1-track.bin"
 		}
 	]

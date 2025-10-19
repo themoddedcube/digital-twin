@@ -175,8 +175,8 @@ class AIRecommendationSystem {
   startRealTimeUpdates() {
     // Update recommendations every 30 seconds
     setInterval(() => {
-      this.updateRecommendations();
-    }, 30000);
+      this.generateInitialRecommendations();
+    }, 20000);
 
     // Update confidence scores every 5 seconds
     setInterval(() => {
@@ -184,45 +184,219 @@ class AIRecommendationSystem {
     }, 5000);
   }
 
-  updateRecommendations() {
-    // Simulate new recommendations based on driver profile
-    const driverProfile = driverManager.getDriverProfile();
+ 
 
-    // Generate personalized recommendations
-    if (driverProfile.current.aggressiveness >= 8) {
-      this.addRecommendation({
-        type: 'brain',
-        title: 'Aggressive Strategy Opportunity',
-        description: 'Your high aggressiveness rating suggests an early pit stop could gain track position. Consider undercut strategy.',
-        confidence: 88
-      });
-    }
-
-    if (driverProfile.current.flexibility <= 5) {
-      this.addRecommendation({
+  generateInitialRecommendations() {
+    const allRecommendations = [
+      {
+        id: 1,
         type: 'warning',
-        title: 'Strategy Flexibility Alert',
-        description: 'Lower flexibility rating detected. Recommend sticking to planned strategy with minimal deviations.',
-        confidence: 92
-      });
-    }
+        title: 'Tire Strategy Recommendation',
+        description: 'Based on current tire degradation and track temperature rising to 42°C, recommend pit stop in 3-4 laps for medium compound.',
+        confidence: 94,
+        timestamp: new Date()
+      },
+      {
+        id: 2,
+        type: 'fuel',
+        title: 'Fuel Management Alert',
+        description: 'Current fuel consumption rate is 2% above optimal. Suggest adjusting engine mode to lean mix on straights.',
+        confidence: 87,
+        timestamp: new Date()
+      },
+      {
+        id: 3,
+        type: 'brain',
+        title: 'Overtaking Opportunity',
+        description: 'Opponent showing reduced pace in sector 2. DRS advantage presents overtaking window at turn 12 in next 2 laps.',
+        confidence: 91,
+        timestamp: new Date()
+      },
+      {
+        id: 4,
+        type: 'success',
+        title: 'Strategy On Track',
+        description: 'Current pace and tire management aligns perfectly with planned 2-stop strategy. Maintain current delta.',
+        confidence: 96,
+        timestamp: new Date()
+      },
+      {
+        id: 5,
+        type: 'weather',
+        title: 'Weather Update Impact',
+        description: 'Cloud cover increasing. Track temperature may drop 3-5°C in next 15 minutes. Monitor tire pressure adjustments.',
+        confidence: 82,
+        timestamp: new Date()
+      },
+      {
+        id: 6,
+        type: 'warning',
+        title: 'Brake Temperature Alert',
+        description: 'Front-left brake temp exceeding optimal range. Consider adjusted brake balance for next sector.',
+        confidence: 89,
+        timestamp: new Date()
+      },
+      {
+        id: 7,
+        type: 'success',
+        title: 'DRS Zone Efficiency',
+        description: 'Excellent DRS usage detected. Maintaining 0.3s gain per activation compared to field average.',
+        confidence: 93,
+        timestamp: new Date()
+      },
+      {
+        id: 8,
+        type: 'brain',
+        title: 'Sector Performance Analysis',
+        description: 'Sector 3 times improving. Current pace suggests potential for purple sector in next 2 laps.',
+        confidence: 85,
+        timestamp: new Date()
+      },
+      {
+        id: 9,
+        type: 'fuel',
+        title: 'Energy Deployment Optimization',
+        description: 'ERS deployment pattern suboptimal in sector 1. Recommend full deployment on exit of turn 3.',
+        confidence: 91,
+        timestamp: new Date()
+      },
+      {
+        id: 10,
+        type: 'weather',
+        title: 'Wind Direction Change',
+        description: 'Wind shifted to tailwind in sector 2. Adjust downforce settings for maximum straight-line speed.',
+        confidence: 88,
+        timestamp: new Date()
+      },
+      {
+        id: 11,
+        type: 'warning',
+        title: 'Gearbox Temperature Rising',
+        description: 'Gearbox temp approaching upper limit. Recommend smoother gear changes for next 5 laps.',
+        confidence: 86,
+        timestamp: new Date()
+      },
+      {
+        id: 12,
+        type: 'brain',
+        title: 'Traffic Management Strategy',
+        description: 'Lapped car ahead in 2 laps. Optimal overtake location identified at turn 7 DRS zone.',
+        confidence: 90,
+        timestamp: new Date()
+      },
+      {
+        id: 13,
+        type: 'success',
+        title: 'Lap Time Consistency',
+        description: 'Outstanding consistency: last 5 laps within 0.2s variance. Maintain current rhythm.',
+        confidence: 97,
+        timestamp: new Date()
+      },
+      {
+        id: 14,
+        type: 'fuel',
+        title: 'Fuel Load Advantage',
+        description: 'Lighter fuel load than competitors. Consider pushing for 3 laps to build gap before pit stop.',
+        confidence: 92,
+        timestamp: new Date()
+      },
+      {
+        id: 15,
+        type: 'warning',
+        title: 'Front Wing Vibration Detected',
+        description: 'Sensor data indicates minor front wing vibration. Monitor for damage, consider inspection at pit stop.',
+        confidence: 84,
+        timestamp: new Date()
+      },
+      {
+        id: 16,
+        type: 'weather',
+        title: 'Track Grip Evolution',
+        description: 'Track grip improving as rubber builds up. Expect 0.3-0.5s lap time improvement over next 10 laps.',
+        confidence: 89,
+        timestamp: new Date()
+      },
+      {
+        id: 17,
+        type: 'brain',
+        title: 'Undercut Window Opening',
+        description: 'Competitor tire deg 15% higher than ours. Undercut opportunity available in next 2 laps.',
+        confidence: 94,
+        timestamp: new Date()
+      },
+      {
+        id: 18,
+        type: 'success',
+        title: 'Power Unit Performance',
+        description: 'PU operating at peak efficiency. Current deployment strategy optimal for race conditions.',
+        confidence: 95,
+        timestamp: new Date()
+      },
+      {
+        id: 19,
+        type: 'warning',
+        title: 'Tire Pressure Adjustment Needed',
+        description: 'Right-side tire pressures 0.5 PSI below target. Recommend adjustment at next pit stop.',
+        confidence: 87,
+        timestamp: new Date()
+      },
+      {
+        id: 20,
+        type: 'fuel',
+        title: 'Lift and Coast Recommendation',
+        description: 'Fuel margin tight for current pace. Implement lift and coast 50m earlier at turns 8 and 14.',
+        confidence: 90,
+        timestamp: new Date()
+      },
+      {
+        id: 21,
+        type: 'brain',
+        title: 'Safety Car Probability',
+        description: 'Historical data suggests 35% safety car probability in next 15 laps. Prepare alternate strategy.',
+        confidence: 78,
+        timestamp: new Date()
+      },
+      {
+        id: 22,
+        type: 'weather',
+        title: 'Humidity Rising',
+        description: 'Humidity increased 12% in last 10 minutes. May affect brake cooling and tire temps.',
+        confidence: 83,
+        timestamp: new Date()
+      },
+      {
+        id: 23,
+        type: 'success',
+        title: 'Cornering Speed Optimal',
+        description: 'Minimum corner speeds exceeding targets in all high-speed corners. Excellent car balance.',
+        confidence: 94,
+        timestamp: new Date()
+      },
+      {
+        id: 24,
+        type: 'warning',
+        title: 'Battery Charge Cycle',
+        description: 'Battery not reaching full charge on straights. Adjust harvesting settings to maximize deployment.',
+        confidence: 88,
+        timestamp: new Date()
+      },
+      {
+        id: 25,
+        type: 'brain',
+        title: 'Fastest Lap Opportunity',
+        description: 'Fresh tire advantage and fuel load create fastest lap window. Recommend push in next 3 laps.',
+        confidence: 91,
+        timestamp: new Date()
+      }
+    ];
+
+    // Randomly select 5 recommendations
+    this.recommendations = this.getRandomRecommendations(allRecommendations, 5);
   }
 
-  addRecommendation(recommendation) {
-    const newRec = {
-      id: Date.now(),
-      ...recommendation,
-      timestamp: new Date()
-    };
-
-    this.recommendations.unshift(newRec);
-
-    // Keep only latest 5 recommendations
-    if (this.recommendations.length > 5) {
-      this.recommendations.pop();
-    }
-
-    this.renderRecommendations();
+  getRandomRecommendations(array, count) {
+    const shuffled = [...array].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
   }
 
   updateConfidenceScores() {
@@ -452,7 +626,7 @@ class Track3DVisualization {
     pointLight.position.set(-5, 5, 5);
     this.scene.add(pointLight);
 
-    this.camera.position.set(-1, 1, 6);
+    this.camera.position.set(-1, 1, 1);
 
     // Orbit Controls
     const controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -467,25 +641,24 @@ class Track3DVisualization {
   loadTrackModel() {
     const loader = new GLTFLoader();
     loader.load(
-      "./assets/models/f1-car.gltf",
+      "./assets/models/f1-track.gltf",
       (gltf) => {
         this.track = gltf.scene;
-
-        // Scale & center track
-        this.track.scale.set(1.5, 1.5, 1.5);
+        // this.track.scale.set(1, 1, 1);
+  
         const box = new THREE.Box3().setFromObject(this.track);
         const center = box.getCenter(new THREE.Vector3());
         this.track.position.sub(center);
-
-        // Add subtle glow effect
-        this.track.traverse((child) => {
-          if (child.isMesh) {
-            child.material.emissive = new THREE.Color(0x1e40af);
-            child.material.emissiveIntensity = 0.1;
-          }
-        });
-
+  
         this.scene.add(this.track);
+  
+        // Setup Animation Mixer
+        this.mixer = new THREE.AnimationMixer(this.track);
+  
+        gltf.animations.forEach((clip) => {
+          this.mixer.clipAction(clip).play();
+        });
+  
       },
       undefined,
       (error) => {
@@ -494,6 +667,7 @@ class Track3DVisualization {
       }
     );
   }
+  
 
   
 
@@ -510,17 +684,22 @@ class Track3DVisualization {
   }
 
   startAnimation() {
+    const clock = new THREE.Clock();
+  
     const animate = () => {
       requestAnimationFrame(animate);
-
-      if (this.track) {
-        this.track.rotation.y += 0.005;
-      }
-
+  
+      const delta = clock.getDelta();
+  
+      // Update GLTF animations
+      if (this.mixer) this.mixer.update(delta);
+  
       this.renderer.render(this.scene, this.camera);
     };
+  
     animate();
   }
+  
 
   setupResizeHandler() {
     window.addEventListener("resize", () => {
