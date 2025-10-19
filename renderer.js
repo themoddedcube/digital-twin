@@ -124,7 +124,7 @@ function initCar3D() {
   
   // Load F1 car model
   const loader = new GLTFLoader();
-  loader.load('path/to/f1-car-model.glb', (gltf) => {
+  loader.load('assets/models/f1-car.glb', (gltf) => {
     const car = gltf.scene;
     scene.add(car);
     
@@ -166,7 +166,7 @@ function initTrack3D() {
   
   // Load track model
   const loader = new GLTFLoader();
-  loader.load('path/to/f1-track-model.glb', (gltf) => {
+  loader.load('assets/models/f1-track.glb', (gltf) => {
     const track = gltf.scene;
     scene.add(track);
   });
