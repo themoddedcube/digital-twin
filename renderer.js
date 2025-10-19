@@ -1,15 +1,15 @@
 // Electron window controls
-function minimizeWindow() {
-  const { remote } = require("electron")
-  const window = remote.getCurrentWindow()
-  window.minimize()
-}
+// window.minimizeWindow = function() {
+//   const { remote } = require("electron");
+//   const window = remote.getCurrentWindow();
+//   window.minimize();
+// }
 
-function closeWindow() {
-  const { remote } = require("electron")
-  const window = remote.getCurrentWindow()
-  window.close()
-}
+// window.closeWindow = function() {
+//   const { remote } = require("electron");
+//   const window = remote.getCurrentWindow();
+//   window.close();
+// }
 
 // Panel resizing functionality
 class PanelResizer {
@@ -138,12 +138,15 @@ function initCar3D() {
     (gltf) => {
       const car = gltf.scene;
       
-      // Scale and position the car
-      car.scale.set(1.5, 1.5, 1.5); // Scale down if too big
-      // car.position.set(0, 0, 0);
+      // Scale the car
+      car.scale.set(1.5, 1.5, 1.5);
+      
+      // Center the car by calculating its bounding box
+      const box = new THREE.Box3().setFromObject(car);
+      const center = box.getCenter(new THREE.Vector3());
+      car.position.sub(center);
       
       scene.add(car);
-      // gltf.scene.scale.set(1.5,1.5,1.5) 
       
       // Auto-rotate animation
       function animate() {
@@ -154,7 +157,7 @@ function initCar3D() {
       animate();
     });
   
-  camera.position.z = 5;
+  camera.position.z = 6;
   camera.position.x = -1;
   camera.position.y = 1;
   
